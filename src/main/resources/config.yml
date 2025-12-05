@@ -24,7 +24,7 @@ security:
   lockout-duration: 300
   sessions:
     enabled: true
-    duration: 86400
+    duration: 60
     remember-ip: true
 
 captcha:

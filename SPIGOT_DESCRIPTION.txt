@@ -1,0 +1,206 @@
+[CENTER][IMG]https://imgur.com/a/WyI2AGP[/IMG]
+
+[SIZE=6][B][COLOR=#FF6B35]PhoenixLogin[/COLOR][/B][/SIZE]
+[SIZE=4][I]Advanced Authentication System for Minecraft[/I][/SIZE]
+
+[URL='https://github.com/tomas2193xd-arch/PhoenixLogin'][IMG]https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github[/IMG][/URL] [URL='https://youtu.be/YVRDkWvm3n0'][IMG]https://img.shields.io/badge/YouTube-Demo-FF0000?style=for-the-badge&logo=youtube[/IMG][/URL]
+
+[SIZE=5][B]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/B][/SIZE][/CENTER]
+
+[SIZE=5][COLOR=#FF6B35]📋 Description[/COLOR][/SIZE]
+
+[B]PhoenixLogin[/B] is a next-generation authentication plugin designed to protect your Minecraft server against unauthorized access, bots, and cracked accounts. With a robust security system, stunning visual effects, and multiple layers of protection, PhoenixLogin ensures that only legitimate players can access your server.
+
+[SIZE=5][COLOR=#FF6B35]✨ Key Features[/COLOR][/SIZE]
+
+[B][COLOR=#4ECDC4]🔐 Complete Authentication System[/COLOR][/B]
+[LIST]
+[*] Secure registration and login with BCrypt encryption
+[*] Session system with IP memory (configurable)
+[*] Protection against brute-force attacks with temporary lockout
+[*] In-game password change
+[*] Account deletion with confirmation
+[*] Customizable password requirements (length, uppercase, numbers, special characters)
+[/LIST]
+
+[B][COLOR=#4ECDC4]🤖 Anti-Bot System with Captcha[/COLOR][/B]
+[LIST]
+[*] [B]Item Captcha:[/B] Player must place a specific item in a designated slot
+[*] [B]Math Captcha:[/B] Solve simple math operations (coming soon)
+[*] Configurable and customizable according to your server needs
+[*] Effective protection against bots and automated attacks
+[/LIST]
+
+[B][COLOR=#4ECDC4]🌍 Void Authentication World[/COLOR][/B]
+[LIST]
+[*] Automatic teleportation to a void world during login
+[*] Prevents unauthenticated players from seeing or exploring your server
+[*] Automatic generation of the login world
+[*] Automatic return to spawn or previous location after successful login
+[/LIST]
+
+[B][COLOR=#4ECDC4]🎭 Immersive Visual Effects[/COLOR][/B]
+[LIST]
+[*] [B]Boss Bar:[/B] Visual indicator of authentication status
+[*] [B]Titles:[/B] Large, eye-catching messages with instructions
+[*] [B]Sounds:[/B] Audio feedback for actions (login, register, errors)
+[*] [B]Particles:[/B] Visual effects for confirmations and errors
+[*] [B]Login Music:[/B] Optional background music system during authentication
+  [LIST]
+  [*] Support for vanilla Minecraft sounds
+  [*] Support for .nbs files with NoteBlockAPI (custom music)
+  [/LIST]
+[/LIST]
+
+[B][COLOR=#4ECDC4]🛡️ Total Player Protection[/COLOR][/B]
+[LIST]
+[*] Movement blocking until authentication
+[*] Interaction blocking (break, place, open inventories, etc.)
+[*] Damage blocking (received and dealt)
+[*] Unauthorized command blocking
+[*] Complete freezing of unauthenticated player
+[*] Configurable auto-kick if not authenticated within X seconds
+[/LIST]
+
+[B][COLOR=#4ECDC4]💾 Flexible Storage[/COLOR][/B]
+[LIST]
+[*] SQLite support (default, no configuration needed)
+[*] MySQL/MariaDB support with connection pooling
+[*] Asynchronous system to prevent server lag
+[*] Automatic schema migration
+[/LIST]
+
+[B][COLOR=#4ECDC4]🌐 Multi-Language[/COLOR][/B]
+[LIST]
+[*] Fully translatable system
+[*] Spanish included by default
+[*] Easy addition of new languages through configuration files
+[/LIST]
+
+[B][COLOR=#4ECDC4]⚙️ Highly Configurable[/COLOR][/B]
+[LIST]
+[*] Over 50 configuration options
+[*] Customize all aspects of the plugin
+[*] Clear and commented configuration
+[*] Reload config without restarting the server
+[/LIST]
+
+[SIZE=5][COLOR=#FF6B35]📹 Video Demonstration[/COLOR][/SIZE]
+
+[MEDIA=youtube]YVRDkWvm3n0[/MEDIA]
+
+[SIZE=5][COLOR=#FF6B35]🎯 Commands[/COLOR][/SIZE]
+
+[B]Players:[/B]
+[CODE]
+/login <password>                  - Log into your account (alias: /l)
+/register <password> <confirm>     - Register a new account (alias: /reg)
+/changepassword <old> <new>        - Change your password (alias: /changepass, /cp)
+/unregister <password>             - Delete your account
+[/CODE]
+
+[B]Administrators:[/B]
+[CODE]
+/phoenixlogin                      - Main admin command (alias: /plogin, /pl)
+/setspawn                          - Set the spawn point after login
+[/CODE]
+
+[SIZE=5][COLOR=#FF6B35]🔑 Permissions[/COLOR][/SIZE]
+
+[CODE]
+phoenixlogin.admin    - Access to admin commands (default: op)
+phoenixlogin.setspawn - Set login spawn location (default: op)
+phoenixlogin.bypass   - Bypass login requirement (default: false)
+phoenixlogin.premium  - Auto-login for premium accounts (default: false)
+[/CODE]
+
+[SIZE=5][COLOR=#FF6B35]💻 Installation[/COLOR][/SIZE]
+
+[B]1.[/B] Download the latest version of PhoenixLogin
+[B]2.[/B] Place the .jar file in your server's [FONT=Courier New]plugins/[/FONT] folder
+[B]3.[/B] Restart the server or run [FONT=Courier New]/reload confirm[/FONT]
+[B]4.[/B] Configure the plugin by editing [FONT=Courier New]plugins/PhoenixLogin/config.yml[/FONT]
+[B]5.[/B] (Optional) Install [URL='https://www.spigotmc.org/resources/noteblockapi.19287/']NoteBlockAPI[/URL] for custom music
+[B]6.[/B] Enjoy a secure server!
+
+[SIZE=5][COLOR=#FF6B35]🔧 Requirements[/COLOR][/SIZE]
+
+[LIST]
+[*] [B]Minecraft:[/B] 1.19 or higher
+[*] [B]Server Software:[/B] Spigot, Paper, Purpur, or any compatible fork
+[*] [B]Java:[/B] 17 or higher
+[*] [B]Optional:[/B] NoteBlockAPI for custom music (.nbs files)
+[/LIST]
+
+[SIZE=5][COLOR=#FF6B35]📊 Featured Configuration[/COLOR][/SIZE]
+
+[B]Customizable Security:[/B]
+[CODE]
+security:
+  password:
+    min-length: 4              # Minimum password length
+    max-length: 32             # Maximum password length
+    require-uppercase: false   # Require uppercase letters
+    require-numbers: false     # Require numbers
+    require-special: false     # Require special characters
+  max-login-attempts: 3        # Maximum login attempts
+  lockout-duration: 300        # Lockout duration (seconds)
+  sessions:
+    enabled: true              # Session system
+    duration: 60               # Session duration (seconds)
+    remember-ip: true          # Remember player IP
+[/CODE]
+
+[B]Captcha System:[/B]
+[CODE]
+captcha:
+  enabled: true                # Enable anti-bot system
+  type: "ITEM"                 # ITEM or MATH
+  item:
+    required-item: "EMERALD"   # Required item
+    target-slot: 4             # Slot to place it in
+[/CODE]
+
+[SIZE=5][COLOR=#FF6B35]🐛 Bug Reports[/COLOR][/SIZE]
+
+Found a bug? Help me improve the plugin!
+[LIST]
+[*] [B]GitHub Issues:[/B] [URL='https://github.com/tomas2193xd-arch/PhoenixLogin/issues']Report here[/URL]
+[*] [B]Discord:[/B] Tomas2193
+[/LIST]
+
+[SIZE=5][COLOR=#FF6B35]💡 Planned Features[/COLOR][/SIZE]
+
+[LIST]
+[*] 🔐 Two-factor authentication (2FA)
+[*] 🌐 Discord integration for notifications
+[*] 👤 Premium account system with auto-login
+[*] 📊 Advanced statistics and logs
+[*] 🔍 Suspicious IP filtering
+[*] 📧 Email password recovery system
+[*] 🎨 Administration GUI
+[/LIST]
+
+[SIZE=5][COLOR=#FF6B35]🌟 Why PhoenixLogin?[/COLOR][/SIZE]
+
+[LIST]
+[*] ✅ [B]Open Source:[/B] Review the code on GitHub
+[*] ✅ [B]Frequent Updates:[/B] Constant improvements and fixes
+[*] ✅ [B]Optimized Performance:[/B] Asynchronous operations, no lag
+[*] ✅ [B]Easy to Use:[/B] Intuitive and documented configuration
+[*] ✅ [B]Security First:[/B] BCrypt encryption, anti-bot protection
+[*] ✅ [B]100% Free:[/B] No purchases, no premium, no limits
+[/LIST]
+
+[CENTER][SIZE=5][B]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/B][/SIZE]
+
+[SIZE=4][B][COLOR=#FF6B35]Useful Links[/COLOR][/B][/SIZE]
+
+[URL='https://github.com/tomas2193xd-arch/PhoenixLogin'][IMG]https://img.shields.io/badge/📦-GitHub-181717?style=for-the-badge[/IMG][/URL] [URL='https://youtu.be/YVRDkWvm3n0'][IMG]https://img.shields.io/badge/🎥-YouTube-FF0000?style=for-the-badge[/IMG][/URL]
+
+[B]Support Discord:[/B] Tomas2193
+
+[SIZE=3][I]Made with ❤️ by TomLe | Version 1.0.0 | Release: 12/04/2025[/I][/SIZE]
+
+If you like the plugin, don't forget to leave a [B][COLOR=#FFD700]⭐ 5-star review[/COLOR][/B]!
+[I]Your support helps the project keep growing[/I] 🚀[/CENTER]
