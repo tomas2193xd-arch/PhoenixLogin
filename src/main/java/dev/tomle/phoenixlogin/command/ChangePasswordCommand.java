@@ -20,7 +20,8 @@ public class ChangePasswordCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cEste comando solo puede ser usado por jugadores.");
+            sender.sendMessage(
+                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
             return true;
         }
 
@@ -56,7 +57,7 @@ public class ChangePasswordCommand implements CommandExecutor {
                         "max", String.valueOf(maxLength));
                 msg.sendMessage(player, "auth.password-too-long", placeholders);
             } else {
-                player.sendMessage(msg.colorize("&cLa nueva contraseña no cumple con los requisitos de seguridad."));
+                msg.sendMessage(player, "commands.changepassword.requirements-not-met");
             }
 
             plugin.getEffectsManager().playErrorSound(player);
@@ -77,7 +78,7 @@ public class ChangePasswordCommand implements CommandExecutor {
                                                 plugin.getEffectsManager().playRegisterSound(player);
                                                 plugin.getLogger().info(player.getName() + " changed their password.");
                                             } else {
-                                                player.sendMessage(msg.colorize("&cError al cambiar la contraseña."));
+                                                msg.sendMessage(player, "commands.changepassword.failed");
                                                 plugin.getEffectsManager().playErrorSound(player);
                                             }
                                         });

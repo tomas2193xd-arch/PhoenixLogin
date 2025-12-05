@@ -18,7 +18,8 @@ public class UnregisterCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cEste comando solo puede ser usado por jugadores.");
+            sender.sendMessage(
+                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
             return true;
         }
 
@@ -56,12 +57,12 @@ public class UnregisterCommand implements CommandExecutor {
                                                 // Kickear al jugador después de 3 segundos
                                                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                                                     if (player.isOnline()) {
-                                                        player.kickPlayer(msg.colorize(
-                                                                "&eTu cuenta ha sido eliminada exitosamente."));
+                                                        player.kickPlayer(
+                                                                msg.getMessage("commands.unregister.kick-message"));
                                                     }
                                                 }, 60L);
                                             } else {
-                                                player.sendMessage(msg.colorize("&cError al eliminar la cuenta."));
+                                                msg.sendMessage(player, "commands.unregister.failed");
                                                 plugin.getEffectsManager().playErrorSound(player);
                                             }
                                         });

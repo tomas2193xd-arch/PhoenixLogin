@@ -21,7 +21,8 @@ public class LoginCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cEste comando solo puede ser usado por jugadores.");
+            sender.sendMessage(
+                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
             return true;
         }
 
@@ -40,7 +41,7 @@ public class LoginCommand implements CommandExecutor {
         }
 
         if (args.length != 1) {
-            player.sendMessage(msg.colorize("&7Uso: &f/login <contraseña>"));
+            msg.sendMessage(player, "auth.login-usage");
             return true;
         }
 
@@ -78,6 +79,9 @@ public class LoginCommand implements CommandExecutor {
 
         plugin.getAuthSecurityManager().recordSuccessfulAttempt(player);
 
+        // Limpiar inventario de captcha si existe
+        player.getInventory().clear();
+
         player.setWalkSpeed(0.2f);
         player.setFlySpeed(0.1f);
 
@@ -96,7 +100,8 @@ public class LoginCommand implements CommandExecutor {
                 player.getLocation().getBlockY() + ", " +
                 player.getLocation().getBlockZ() + ")");
 
-        String joinMsg = "§e" + player.getName() + " joined the game";
+        String joinMsg = msg.getMessage("join.message",
+                MessageManager.createPlaceholders("player", player.getName()));
         plugin.getServer().broadcastMessage(joinMsg);
 
         // 🎵 DETENER MÚSICA

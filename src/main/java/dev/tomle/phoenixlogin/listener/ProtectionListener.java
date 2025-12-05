@@ -31,12 +31,12 @@ public class ProtectionListener implements Listener {
         Player player = event.getPlayer();
 
         if (!plugin.getSessionManager().isAuthenticated(player)) {
-            // Permitir rotación de cabeza pero no movimiento de posición
+            // Permitir SOLO rotación de cabeza (yaw/pitch), bloquear movimiento X/Y/Z
             if (event.getFrom().getX() != event.getTo().getX() ||
-                    event.getFrom().getY() != event.getTo().getY() ||
-                    event.getFrom().getZ() != event.getTo().getZ()) {
-
-                event.setTo(event.getFrom());
+                    event.getFrom().getZ() != event.getTo().getZ() ||
+                    Math.abs(event.getFrom().getY() - event.getTo().getY()) > 0.1) {
+                // Preservar la rotación de la cabeza pero mover al jugador de vuelta
+                event.setTo(event.getFrom().setDirection(event.getTo().getDirection()));
             }
         }
     }
@@ -57,6 +57,7 @@ public class ProtectionListener implements Listener {
             String[] allowedCommands = {
                     "/login",
                     "/register",
+                    "/captcha",
                     "/l",
                     "/reg",
                     "/loguear",

@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 public class AdminCommand implements CommandExecutor {
 
     private final PhoenixLogin plugin;
@@ -38,7 +40,7 @@ public class AdminCommand implements CommandExecutor {
 
             case "info":
                 if (args.length < 2) {
-                    sender.sendMessage(msg.colorize("&7Uso: &f/plogin info <jugador>"));
+                    sender.sendMessage(msg.getMessage("commands.admin.usage-info"));
                     return true;
                 }
                 handleInfo(sender, args[1]);
@@ -46,7 +48,7 @@ public class AdminCommand implements CommandExecutor {
 
             case "unregister":
                 if (args.length < 2) {
-                    sender.sendMessage(msg.colorize("&7Uso: &f/plogin unregister <jugador>"));
+                    sender.sendMessage(msg.getMessage("commands.admin.usage-unregister"));
                     return true;
                 }
                 handleUnregister(sender, args[1]);
@@ -65,14 +67,14 @@ public class AdminCommand implements CommandExecutor {
 
     private void sendHelp(CommandSender sender) {
         MessageManager msg = plugin.getMessageManager();
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
-        sender.sendMessage(msg.colorize("&6&lPhoenix&e&lLogin &8- &7Admin Commands"));
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
-        sender.sendMessage(msg.colorize("&e/plogin reload &8- &7Recargar configuración"));
-        sender.sendMessage(msg.colorize("&e/plogin info <jugador> &8- &7Ver información de un jugador"));
-        sender.sendMessage(msg.colorize("&e/plogin unregister <jugador> &8- &7Eliminar cuenta de un jugador"));
-        sender.sendMessage(msg.colorize("&e/plogin stats &8- &7Estadísticas del plugin"));
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.header"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.title"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.header"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.reload"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.info"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.unregister"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.stats"));
+        sender.sendMessage(msg.getMessage("commands.admin.help.footer"));
     }
 
     private void handleReload(CommandSender sender) {
@@ -111,14 +113,15 @@ public class AdminCommand implements CommandExecutor {
                                 : "N/A";
 
                         String lastLogin = data.getLastLogin() > 0
-                                ? new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                                ? new java.text.SimpleDateFormat(msg.getMessage("format.date"))
                                         .format(new java.util.Date(data.getLastLogin()))
-                                : "Nunca";
+                                : msg.getMessage("format.never");
 
                         java.util.Map<String, String> placeholders = MessageManager.createPlaceholders(
                                 "player", playerName,
                                 "registered", registered,
-                                "ip", data.getLastIP() != null ? data.getLastIP() : "N/A",
+                                "ip",
+                                data.getLastIP() != null ? data.getLastIP() : msg.getMessage("format.not-available"),
                                 "last-login", lastLogin);
 
                         String message = msg.getMessage("commands.admin.user-info", placeholders);
@@ -145,7 +148,7 @@ public class AdminCommand implements CommandExecutor {
                             // Si el jugador está online, kickearlo
                             Player target = plugin.getServer().getPlayer(playerName);
                             if (target != null && target.isOnline()) {
-                                target.kickPlayer(msg.colorize("&cTu cuenta ha sido eliminada por un administrador."));
+                                target.kickPlayer(msg.getMessage("commands.admin.account-deleted-by-admin"));
                             }
                         } else {
                             if (sender instanceof Player) {
@@ -166,13 +169,19 @@ public class AdminCommand implements CommandExecutor {
         String dbType = plugin.getConfigManager().getDatabaseType();
         String language = plugin.getConfigManager().getLanguage();
 
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
-        sender.sendMessage(msg.colorize("&6&lPhoenix&e&lLogin &8- &7Estadísticas"));
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
-        sender.sendMessage(msg.colorize("&7Sesiones activas: &e" + activeSessions));
-        sender.sendMessage(msg.colorize("&7Autenticados: &a" + authenticated));
-        sender.sendMessage(msg.colorize("&7Base de datos: &f" + dbType));
-        sender.sendMessage(msg.colorize("&7Idioma: &f" + language));
-        sender.sendMessage(msg.colorize("&6&m-----------------------------"));
+        Map<String, String> placeholders = MessageManager.createPlaceholders(
+                "sessions", String.valueOf(activeSessions),
+                "authenticated", String.valueOf(authenticated),
+                "database", dbType,
+                "language", language);
+
+        sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.title"));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.active-sessions", placeholders));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.authenticated", placeholders));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.database", placeholders));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.language", placeholders));
+        sender.sendMessage(msg.getMessage("commands.admin.stats.footer"));
     }
 }

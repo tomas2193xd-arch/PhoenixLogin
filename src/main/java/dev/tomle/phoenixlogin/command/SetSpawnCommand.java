@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 public class SetSpawnCommand implements CommandExecutor {
 
     private final PhoenixLogin plugin;
@@ -19,7 +21,8 @@ public class SetSpawnCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cThis command can only be used by players.");
+            sender.sendMessage(
+                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
             return true;
         }
 
@@ -27,7 +30,7 @@ public class SetSpawnCommand implements CommandExecutor {
         MessageManager msg = plugin.getMessageManager();
 
         if (!player.hasPermission("phoenixlogin.setspawn")) {
-            player.sendMessage(msg.colorize("&cYou don't have permission to use this command."));
+            msg.sendMessage(player, "commands.setspawn.no-permission");
             return true;
         }
 
@@ -46,12 +49,16 @@ public class SetSpawnCommand implements CommandExecutor {
         // Recargar config manager
         plugin.getConfigManager().reload();
 
-        player.sendMessage(msg.colorize("&a✓ Post-login spawn set successfully!"));
-        player.sendMessage(msg.colorize("&7World: &f" + loc.getWorld().getName()));
-        player.sendMessage(msg.colorize("&7X: &f" + String.format("%.2f", loc.getX())));
-        player.sendMessage(msg.colorize("&7Y: &f" + String.format("%.2f", loc.getY())));
-        player.sendMessage(msg.colorize("&7Z: &f" + String.format("%.2f", loc.getZ())));
-        player.sendMessage(msg.colorize("&eAfter login/register, players will spawn here!"));
+        Map<String, String> placeholders = MessageManager.createPlaceholders(
+                "world", loc.getWorld().getName(),
+                "x", String.format("%.2f", loc.getX()),
+                "y", String.format("%.2f", loc.getY()),
+                "z", String.format("%.2f", loc.getZ()));
+
+        msg.sendMessage(player, "commands.setspawn.success");
+        player.sendMessage(msg.getMessage("commands.setspawn.world", placeholders));
+        player.sendMessage(msg.getMessage("commands.setspawn.coordinates", placeholders));
+        msg.sendMessage(player, "commands.setspawn.info");
 
         plugin.getLogger().info(player.getName() + " set post-login spawn at: " +
                 loc.getWorld().getName() + " " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());

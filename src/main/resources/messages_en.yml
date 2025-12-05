@@ -1,95 +1,224 @@
-# PhoenixLogin - English Messages
+# ======================================================
+# PhoenixLogin - Professional Authentication System
+# Language: English (EN)
+# ======================================================
 
-prefix: "&6&lPhoenix&e&lLogin &8»&r"
+# Plugin prefix (used in most messages)
+prefix: "&8[&6PhoenixLogin&8] &r"
 
-# Authentication messages
+# ======================================================
+# AUTHENTICATION MESSAGES
+# ======================================================
 auth:
-  please-register: "&cPlease register! &7Use: &f/register <password> <confirm>"
-  please-login: "&cPlease log in! &7Use: &f/login <password>"
-  already-logged: "&cYou are already logged in!"
-  not-registered: "&cYou are not registered! &7Use: &f/register <password> <confirm>"
-  already-registered: "&cYou already have a registered account!"
+  # Success messages
+  login-success: "&aSuccessfully logged in!"
+  register-success: "&aSuccessfully registered!"
+  session-restored: "&aWelcome back! Your session has been restored."
 
-  register-success: "&aAccount created successfully! Welcome."
-  login-success: "&aYou have logged in successfully! Enjoy the game."
-  logout-success: "&7You have logged out."
+  # Error messages
+  already-logged: "&cYou are already logged in."
+  not-registered: "&cYou are not registered. Use /register <password> <confirm>"
+  already-registered: "&cYou are already registered. Use /login <password>"
+  wrong-password: "&cIncorrect password! Attempts remaining: &e{attempts}"
+  password-mismatch: "&cPasswords do not match."
+  password-too-short: "&cPassword is too short. Minimum: &e{min}"
+  password-too-long: "&cPassword is too long. Maximum: &e{max}"
+  password-requirements: "&cPassword does not meet security requirements."
+  account-locked: "&cAccount locked due to too many failed attempts. Try again in &e{duration}s&c."
 
-  wrong-password: "&cWrong password! Remaining attempts: &e{attempts}"
-  password-mismatch: "&cPasswords do not match!"
-  password-too-short: "&cPassword must be at least &e{min}&c characters."
-  password-too-long: "&cPassword cannot be longer than &e{max}&c characters."
+  # Usage messages
+  register-usage: "&7Use: &f/register <password> <confirm>"
+  login-usage: "&7Use: &f/login <password>"
 
-  account-locked: "&cYour account has been locked for &e{duration}&c seconds due to multiple failed attempts!"
-  session-restored: "&aSession restored! You have been logged in automatically."
+  # Failed operations
+  register-failed: "&cRegistration failed. Please contact an admin."
 
-# Captcha messages
+  # Welcome messages
+  please-login: "&eWelcome! Please login using &f/login <password>"
+  please-register: "&eWelcome! Please register using &f/register <password> <confirm>"
+
+# ======================================================
+# CAPTCHA MESSAGES
+# ======================================================
 captcha:
-  title: "&6&lAnti-Bot Verification"
-  item-instruction: "&ePlace a &a{item} &ein slot &6#{slot} &eto continue."
-  math-instruction: "&eSolve: &f{question} &e= &f?"
-  success: "&aCaptcha completed correctly!"
-  failed: "&cIncorrect captcha! Try again."
+  # Success and failure
+  success: "&aCaptcha verified! &7You can now proceed."
+  failed: "&cIncorrect code. Please look at the map."
 
-# Boss Bar
-bossbar:
-  please-login: "⚠ Log in within {time} seconds or you will be kicked"
-  please-register: "⚠ Register within {time} seconds or you will be kicked"
-  captcha: "🛡 Complete the captcha to play"
+  # Instructions
+  usage: "&7Use: &f/captcha <code>"
+  item-instruction: "&ePlace the &f{item} &ein slot &f{slot}"
+  math-instruction: "&eSolve: &f{question} &e= ?"
 
-# Titles
+  # Error states
+  not-required: "&cCaptcha is not required."
+  already-authenticated: "&cYou are already authenticated."
+  no-pending: "&cYou don't have a pending captcha."
+
+  # Post-captcha instructions
+  next-step-login: "&eNow please login: &f/login <password>"
+  next-step-register: "&eNow please register: &f/register <password> <confirm>"
+
+# ======================================================
+# BLOCKED ACTIONS (when not authenticated)
+# ======================================================
+blocked:
+  command: "&cYou cannot use commands until you authenticate!"
+  chat: "&cYou cannot chat until you authenticate!"
+
+# ======================================================
+# COMMAND MESSAGES
+# ======================================================
+commands:
+  # General
+  console-only: "&cThis command can only be used from console."
+  player-only: "&cThis command can only be used by players."
+  no-permission: "&cYou don't have permission to use this command."
+
+  # Admin commands
+  admin:
+    no-permission: "&cYou don't have permission to use this command."
+    reload: "&aConfiguration reloaded successfully!"
+    player-not-found: "&cPlayer not found or not registered."
+
+    # Help menu
+    help:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Admin Commands"
+      reload: "&e/plogin reload &8- &7Reload configuration"
+      info: "&e/plogin info <player> &8- &7View player information"
+      unregister: "&e/plogin unregister <player> &8- &7Delete a player's account"
+      stats: "&e/plogin stats &8- &7View plugin statistics"
+      footer: "&6&m-----------------------------"
+
+    # Player info
+    user-info: |
+      &6&m-----------------------------
+      &6&lPlayer Information
+      &6&m-----------------------------
+      &7Player: &f{player}
+      &7Registered: &f{registered}
+      &7Last IP: &f{ip}
+      &7Last Login: &f{last-login}
+      &6&m-----------------------------
+
+    # Actions
+    unregister-player: "&aAccount for &e{player} &ahas been deleted successfully."
+    account-deleted-by-admin: "&cYour account has been deleted by an administrator."
+
+    # Stats display
+    stats:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Statistics"
+      active-sessions: "&7Active sessions: &e{sessions}"
+      authenticated: "&7Authenticated: &a{authenticated}"
+      database: "&7Database: &f{database}"
+      language: "&7Language: &f{language}"
+      footer: "&6&m-----------------------------"
+
+    # Usage messages
+    usage-info: "&7Use: &f/plogin info <player>"
+    usage-unregister: "&7Use: &f/plogin unregister <player>"
+
+  # Change password command
+  changepassword:
+    usage: "&7Use: &f/changepassword <old-password> <new-password>"
+    success: "&aPassword changed successfully!"
+    wrong-old: "&cIncorrect old password."
+    failed: "&cError changing password."
+    requirements-not-met: "&cThe new password does not meet security requirements."
+
+  # Unregister command
+  unregister:
+    usage: "&7Use: &f/unregister <password>"
+    success: "&cYour account has been deleted."
+    wrong-password: "&cIncorrect password."
+    failed: "&cError deleting account."
+    kick-message: "&eYour account has been successfully deleted."
+
+  # Set spawn command
+  setspawn:
+    no-permission: "&cYou don't have permission to use this command."
+    success: "&a✓ Post-login spawn set successfully!"
+    world: "&7World: &f{world}"
+    coordinates: "&7X: &f{x} &7Y: &f{y} &7Z: &f{z}"
+    info: "&eAfter login/register, players will spawn here!"
+
+# ======================================================
+# KICK MESSAGES
+# ======================================================
+kick:
+  too-many-attempts: "&cToo many failed login attempts."
+  timeout: "&cLogin timeout."
+
+# ======================================================
+# TITLES (in-game title messages)
+# ======================================================
 titles:
   welcome:
-    title: "&6&lWelcome"
-    subtitle: "&7Please authenticate your account"
-  login:
-    title: "&a&l✔ Authenticated"
-    subtitle: "&7Enjoy the game!"
+    title: "&6&lWELCOME"
+    subtitle: "&7Please authenticate to continue"
+
   register:
-    title: "&e&l★ Account Created"
-    subtitle: "&7Welcome to the server!"
+    title: "&a&lREGISTERED!"
+    subtitle: "&7Account created successfully"
+
+  login:
+    title: "&a&lWELCOME BACK!"
+    subtitle: "&7You have logged in"
+
   error:
-    title: "&c&l✖ Error"
-    subtitle: "&7{message}"
+    title: "&c&lERROR"
+    subtitle: "&7Something went wrong"
 
-# Commands
-commands:
-  changepassword:
-    success: "&aPassword changed successfully!"
-    wrong-old: "&cCurrent password is incorrect!"
-    usage: "&7Usage: &f/changepassword <current_password> <new_password>"
+  # Timer warnings
+  warning-critical:
+    title: "&c&l⚠ {time} ⚠"
+    subtitle: "&e&lAUTHENTICATE NOW"
 
-  unregister:
-    success: "&eYour account has been deleted!"
-    wrong-password: "&cIncorrect password!"
-    usage: "&7Usage: &f/unregister <password>"
+  warning-medium:
+    title: "&6⏱ {time} seconds"
+    subtitle: "&eAuthenticate soon!"
 
-  admin:
-    reload: "&aConfiguration reloaded!"
-    user-info: "&7Information for &e{player}&7:\n  &8• &7Registered: &f{registered}\n  &8• &7IP: &f{ip}\n  &8• &7Last login: &f{last-login}"
-    unregister-player: "&7You have deleted &e{player}'s &7account."
-    reset-password: "&e{player}'s &7password reset to: &f{password}"
-    no-permission: "&cYou don't have permission to use this command!"
-    player-not-found: "&cPlayer not found!"
+# ======================================================
+# BOSS BARS (top-of-screen progress bars)
+# ======================================================
+bossbar:
+  captcha: "&6&lVerify Captcha - Look at your map"
+  login: "&e&lPlease Login - /login <password>"
+  register: "&e&lPlease Register - /register <password> <confirm>"
+  please-login: "&e&lPlease Login - /login <password>"
+  please-register: "&e&lPlease Register - /register <password> <confirm>"
 
-# Block messages
-blocked:
-  movement: "&cYou cannot move until you authenticate."
-  command: "&cYou cannot use commands until you authenticate."
-  chat: "&cYou cannot chat until you authenticate."
-  interact: "&cYou cannot interact until you authenticate."
+# ======================================================
+# TIMER WARNINGS (auto-kick countdown)
+# ======================================================
+timer:
+  critical-warning:
+    title: "&c&l⚠ WARNING! ⚠"
+    message: "&eOnly &c{time} seconds &eremaining to authenticate!"
+    command-login: "&7Use: &f/login <password>"
+    command-register: "&7Use: &f/register <password> <confirm>"
 
-# Kick messages
-kick:
-  timeout: "&cYou have been kicked!\n\n&7You did not authenticate in time.\n&7Please reconnect and log in."
-  captcha-failed: "&cYou have been kicked!\n\n&7You failed the anti-bot captcha.\n&7If you are a real player, reconnect."
-  too-many-attempts: "&cYou have been kicked!\n\n&7Too many failed login attempts.\n&7Wait &e{duration} &7seconds."
+  medium-warning:
+    message: "&e⏰ {time} seconds remaining to authenticate."
 
-# Discord messages
-discord:
-  new-register: "**New Registration**\nPlayer: {player}\nIP: {ip}\nDate: {date}"
-  suspicious-login: "**⚠️ Suspicious Login**\nPlayer: {player}\nNew IP: {ip}\nLast IP: {last-ip}\nDate: {date}"
+  # Action bar (above hotbar)
+  actionbar:
+    login: "&8[{bar}&8] {color}{time}s &8| &7LOGIN"
+    register: "&8[{bar}&8] {color}{time}s &8| &7REGISTER"
 
-# Miscellaneous
-misc:
-  time-format: "{hours}h {minutes}m {seconds}s"
-  date-format: "MM/dd/yyyy HH:mm:ss"
+# ======================================================
+# JOIN MESSAGES
+# ======================================================
+join:
+  message: "&e{player} joined the game"
+
+# ======================================================
+# DATE/TIME FORMAT
+# Never shown directly to users, but used in admin commands
+# ======================================================
+format:
+  date: "MM/dd/yyyy HH:mm:ss"
+  never: "Never"
+  not-available: "N/A"

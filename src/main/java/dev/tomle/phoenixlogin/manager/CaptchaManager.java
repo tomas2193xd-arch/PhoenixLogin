@@ -190,6 +190,10 @@ public class CaptchaManager {
         mapCaptchaManager.removeCaptcha(player);
     }
 
+    public boolean hasCaptcha(Player player) {
+        return hasPendingCaptcha(player);
+    }
+
     // === INNER CLASSES ===
 
     private enum CaptchaType {

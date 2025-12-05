@@ -110,6 +110,7 @@ public class PhoenixLogin extends JavaPlugin {
 
         getCommand("login").setExecutor(new LoginCommand(this));
         getCommand("register").setExecutor(new RegisterCommand(this));
+        getCommand("captcha").setExecutor(new CaptchaCommand(this));
         getCommand("changepassword").setExecutor(new ChangePasswordCommand(this));
         getCommand("unregister").setExecutor(new UnregisterCommand(this));
         getCommand("phoenixlogin").setExecutor(new AdminCommand(this));

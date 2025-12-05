@@ -1,95 +1,224 @@
-# PhoenixLogin - Mensajes en Español
+# ======================================================
+# PhoenixLogin - Sistema Profesional de Autenticación
+# Idioma: Español (ES)
+# ======================================================
 
-prefix: "&6&lPhoenix&e&lLogin &8»&r"
+# Prefijo del plugin (usado en la mayoría de mensajes)
+prefix: "&8[&6PhoenixLogin&8] &r"
 
-# Mensajes de autenticación
+# ======================================================
+# MENSAJES DE AUTENTICACIÓN
+# ======================================================
 auth:
-  please-register: "&c¡Por favor regístrate! &7Usa: &f/register <contraseña> <confirmar>"
-  please-login: "&c¡Por favor inicia sesión! &7Usa: &f/login <contraseña>"
-  already-logged: "&c¡Ya has iniciado sesión!"
-  not-registered: "&c¡No estás registrado! &7Usa: &f/register <contraseña> <confirmar>"
-  already-registered: "&c¡Ya tienes una cuenta registrada!"
+  # Mensajes de éxito
+  login-success: "&a¡Has iniciado sesión correctamente!"
+  register-success: "&a¡Te has registrado correctamente!"
+  session-restored: "&a¡Bienvenido de nuevo! Tu sesión ha sido restaurada."
 
-  register-success: "&a¡Cuenta creada exitosamente! Bienvenido."
-  login-success: "&a¡Has iniciado sesión correctamente! Disfruta del juego."
-  logout-success: "&7Has cerrado sesión."
-
+  # Mensajes de error
+  already-logged: "&cYa has iniciado sesión."
+  not-registered: "&cNo estás registrado. Usa /register <contraseña> <confirmar>"
+  already-registered: "&cYa estás registrado. Usa /login <contraseña>"
   wrong-password: "&c¡Contraseña incorrecta! Intentos restantes: &e{attempts}"
-  password-mismatch: "&c¡Las contraseñas no coinciden!"
-  password-too-short: "&cLa contraseña debe tener al menos &e{min}&c caracteres."
-  password-too-long: "&cLa contraseña no puede tener más de &e{max}&c caracteres."
+  password-mismatch: "&cLas contraseñas no coinciden."
+  password-too-short: "&cLa contraseña es muy corta. Mínimo: &e{min}"
+  password-too-long: "&cLa contraseña es muy larga. Máximo: &e{max}"
+  password-requirements: "&cLa contraseña no cumple con los requisitos de seguridad."
+  account-locked: "&cCuenta bloqueada por demasiados intentos fallidos. Intenta en &e{duration}s&c."
 
-  account-locked: "&c¡Tu cuenta ha sido bloqueada por &e{duration}&c segundos debido a múltiples intentos fallidos!"
-  session-restored: "&a¡Sesión restaurada! Has iniciado sesión automáticamente."
+  # Mensajes de uso
+  register-usage: "&7Uso: &f/register <contraseña> <confirmar>"
+  login-usage: "&7Uso: &f/login <contraseña>"
 
-# Mensajes de captcha
+  # Operaciones fallidas
+  register-failed: "&cError al registrar. Por favor contacta a un admin."
+
+  # Mensajes de bienvenida
+  please-login: "&e¡Bienvenido! Por favor ingresa usando &f/login <contraseña>"
+  please-register: "&e¡Bienvenido! Por favor regístrate usando &f/register <contraseña> <confirmar>"
+
+# ======================================================
+# MENSAJES DE CAPTCHA
+# ======================================================
 captcha:
-  title: "&6&lVerificación Anti-Bot"
-  item-instruction: "&eColoca un &a{item} &een el slot &6#{slot} &epara continuar."
-  math-instruction: "&eResuelve: &f{question} &e= &f?"
-  success: "&a¡Captcha completado correctamente!"
-  failed: "&c¡Captcha incorrecto! Inténtalo de nuevo."
+  # Éxito y fallo
+  success: "&a¡Captcha verificado! &7Puedes continuar."
+  failed: "&cCódigo incorrecto. Por favor mira el mapa."
 
-# Boss Bar
-bossbar:
-  please-login: "⚠ Inicia sesión en {time} segundos o serás expulsado"
-  please-register: "⚠ Regístrate en {time} segundos o serás expulsado"
-  captcha: "🛡 Completa el captcha para jugar"
+  # Instrucciones
+  usage: "&7Uso: &f/captcha <código>"
+  item-instruction: "&eColoca el &f{item} &een el slot &f{slot}"
+  math-instruction: "&eResuelve: &f{question} &e= ?"
 
-# Titles
+  # Estados de error
+  not-required: "&cNo se requiere captcha."
+  already-authenticated: "&cYa estás autenticado."
+  no-pending: "&cNo tienes un captcha pendiente."
+
+  # Instrucciones post-captcha
+  next-step-login: "&eAhora por favor ingresa: &f/login <contraseña>"
+  next-step-register: "&eAhora por favor regístrate: &f/register <contraseña> <confirmar>"
+
+# ======================================================
+# ACCIONES BLOQUEADAS (cuando no está autenticado)
+# ======================================================
+blocked:
+  command: "&c¡No puedes usar comandos hasta que te autentiques!"
+  chat: "&c¡No puedes chatear hasta que te autentiques!"
+
+# ======================================================
+# MENSAJES DE COMANDOS
+# ======================================================
+commands:
+  # General
+  console-only: "&cEste comando solo puede ser usado desde la consola."
+  player-only: "&cEste comando solo puede ser usado por jugadores."
+  no-permission: "&cNo tienes permiso para usar este comando."
+
+  # Comandos de administrador
+  admin:
+    no-permission: "&cNo tienes permiso para usar este comando."
+    reload: "&a¡Configuración recargada exitosamente!"
+    player-not-found: "&cJugador no encontrado o no registrado."
+
+    # Menú de ayuda
+    help:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Comandos de Admin"
+      reload: "&e/plogin reload &8- &7Recargar configuración"
+      info: "&e/plogin info <jugador> &8- &7Ver información de un jugador"
+      unregister: "&e/plogin unregister <jugador> &8- &7Eliminar cuenta de un jugador"
+      stats: "&e/plogin stats &8- &7Estadísticas del plugin"
+      footer: "&6&m-----------------------------"
+
+    # Información del jugador
+    user-info: |
+      &6&m-----------------------------
+      &6&lInformación del Jugador
+      &6&m-----------------------------
+      &7Jugador: &f{player}
+      &7Registrado: &f{registered}
+      &7Última IP: &f{ip}
+      &7Último Login: &f{last-login}
+      &6&m-----------------------------
+
+    # Acciones
+    unregister-player: "&aLa cuenta de &e{player} &aha sido eliminada exitosamente."
+    account-deleted-by-admin: "&cTu cuenta ha sido eliminada por un administrador."
+
+    # Mostrar estadísticas
+    stats:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Estadísticas"
+      active-sessions: "&7Sesiones activas: &e{sessions}"
+      authenticated: "&7Autenticados: &a{authenticated}"
+      database: "&7Base de datos: &f{database}"
+      language: "&7Idioma: &f{language}"
+      footer: "&6&m-----------------------------"
+
+    # Mensajes de uso
+    usage-info: "&7Uso: &f/plogin info <jugador>"
+    usage-unregister: "&7Uso: &f/plogin unregister <jugador>"
+
+  # Comando de cambiar contraseña
+  changepassword:
+    usage: "&7Uso: &f/changepassword <contraseña-antigua> <contraseña-nueva>"
+    success: "&a¡Contraseña cambiada exitosamente!"
+    wrong-old: "&cContraseña antigua incorrecta."
+    failed: "&cError al cambiar la contraseña."
+    requirements-not-met: "&cLa nueva contraseña no cumple con los requisitos de seguridad."
+
+  # Comando de dar de baja
+  unregister:
+    usage: "&7Uso: &f/unregister <contraseña>"
+    success: "&cTu cuenta ha sido eliminada."
+    wrong-password: "&cContraseña incorrecta."
+    failed: "&cError al eliminar la cuenta."
+    kick-message: "&eTu cuenta ha sido eliminada exitosamente."
+
+  # Comando de establecer spawn
+  setspawn:
+    no-permission: "&cNo tienes permiso para usar este comando."
+    success: "&a✓ ¡Spawn post-login establecido exitosamente!"
+    world: "&7Mundo: &f{world}"
+    coordinates: "&7X: &f{x} &7Y: &f{y} &7Z: &f{z}"
+    info: "&eDespués de login/registro, los jugadores aparecerán aquí!"
+
+# ======================================================
+# MENSAJES DE EXPULSIÓN
+# ======================================================
+kick:
+  too-many-attempts: "&cDemasiados intentos fallidos de inicio de sesión."
+  timeout: "&cTiempo de espera agotado."
+
+# ======================================================
+# TÍTULOS (mensajes de título en el juego)
+# ======================================================
 titles:
   welcome:
-    title: "&6&lBienvenido"
-    subtitle: "&7Por favor autentica tu cuenta"
-  login:
-    title: "&a&l✔ Autenticado"
-    subtitle: "&7¡Disfruta del juego!"
+    title: "&6&lBIENVENIDO"
+    subtitle: "&7Por favor autentícate para continuar"
+
   register:
-    title: "&e&l★ Cuenta Creada"
-    subtitle: "&7¡Bienvenido al servidor!"
+    title: "&a&l¡REGISTRADO!"
+    subtitle: "&7Cuenta creada exitosamente"
+
+  login:
+    title: "&a&l¡BIENVENIDO DE VUELTA!"
+    subtitle: "&7Has iniciado sesión"
+
   error:
-    title: "&c&l✖ Error"
-    subtitle: "&7{message}"
+    title: "&c&lERROR"
+    subtitle: "&7Algo salió mal"
 
-# Comandos
-commands:
-  changepassword:
-    success: "&a¡Contraseña cambiada exitosamente!"
-    wrong-old: "&c¡La contraseña actual es incorrecta!"
-    usage: "&7Uso: &f/changepassword <contraseña_actual> <nueva_contraseña>"
+  # Advertencias de temporizador
+  warning-critical:
+    title: "&c&l⚠ {time} ⚠"
+    subtitle: "&e&lAUTENTÍCATE AHORA"
 
-  unregister:
-    success: "&e¡Tu cuenta ha sido eliminada!"
-    wrong-password: "&c¡Contraseña incorrecta!"
-    usage: "&7Uso: &f/unregister <contraseña>"
+  warning-medium:
+    title: "&6⏱ {time} segundos"
+    subtitle: "&e¡Autentícate pronto!"
 
-  admin:
-    reload: "&a¡Configuración recargada!"
-    user-info: "&7Información de &e{player}&7:\n  &8• &7Registrado: &f{registered}\n  &8• &7IP: &f{ip}\n  &8• &7Último login: &f{last-login}"
-    unregister-player: "&7Has eliminado la cuenta de &e{player}&7."
-    reset-password: "&7Contraseña de &e{player} &7restablecida a: &f{password}"
-    no-permission: "&c¡No tienes permiso para usar este comando!"
-    player-not-found: "&c¡Jugador no encontrado!"
+# ======================================================
+# BARRAS DE JEFE (barras de progreso en la parte superior)
+# ======================================================
+bossbar:
+  captcha: "&6&lVerifica el Captcha - Mira tu mapa"
+  login: "&e&lPor favor Ingresa - /login <contraseña>"
+  register: "&e&lPor favor Regístrate - /register <contraseña> <confirmar>"
+  please-login: "&e&lPor favor Ingresa - /login <contraseña>"
+  please-register: "&e&lPor favor Regístrate - /register <contraseña> <confirmar>"
 
-# Mensajes de bloqueo
-blocked:
-  movement: "&cNo puedes moverte hasta autenticarte."
-  command: "&cNo puedes usar comandos hasta autenticarte."
-  chat: "&cNo puedes chatear hasta autenticarte."
-  interact: "&cNo puedes interactuar hasta autenticarte."
+# ======================================================
+# ADVERTENCIAS DE TEMPORIZADOR (cuenta regresiva de expulsión automática)
+# ======================================================
+timer:
+  critical-warning:
+    title: "&c&l⚠ ¡ADVERTENCIA! ⚠"
+    message: "&e¡Solo quedan &c{time} segundos &epara autenticarte!"
+    command-login: "&7Usa: &f/login <contraseña>"
+    command-register: "&7Usa: &f/register <contraseña> <confirmar>"
 
-# Mensajes de kick
-kick:
-  timeout: "&c¡Has sido expulsado!\n\n&7No te autenticaste a tiempo.\n&7Por favor reconecta e inicia sesión."
-  captcha-failed: "&c¡Has sido expulsado!\n\n&7Fallaste el captcha anti-bot.\n&7Si eres un jugador real, reconecta."
-  too-many-attempts: "&c¡Has sido expulsado!\n\n&7Demasiados intentos de inicio de sesión fallidos.\n&7Espera &e{duration} &7segundos."
+  medium-warning:
+    message: "&e⏰ Quedan &6{time} segundos &epara autenticarte."
 
-# Mensajes de Discord
-discord:
-  new-register: "**Nuevo Registro**\nJugador: {player}\nIP: {ip}\nFecha: {date}"
-  suspicious-login: "**⚠️ Login Sospechoso**\nJugador: {player}\nIP Nueva: {ip}\nÚltima IP: {last-ip}\nFecha: {date}"
+  # Barra de acción (encima del hotbar)
+  actionbar:
+    login: "&8[{bar}&8] {color}{time}s &8| &7LOGIN"
+    register: "&8[{bar}&8] {color}{time}s &8| &7REGISTER"
 
-# Varios
-misc:
-  time-format: "{hours}h {minutes}m {seconds}s"
-  date-format: "dd/MM/yyyy HH:mm:ss"
+# ======================================================
+# MENSAJES DE CONEXIÓN
+# ======================================================
+join:
+  message: "&e{player} se ha unido al juego"
+
+# ======================================================
+# FORMATO DE FECHA/HORA
+# Nunca se muestra directamente a los usuarios, pero se usa en comandos de administrador
+# ======================================================
+format:
+  date: "dd/MM/yyyy HH:mm:ss"
+  never: "Nunca"
+  not-available: "N/A"

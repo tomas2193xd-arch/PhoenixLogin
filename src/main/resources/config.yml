@@ -1,7 +1,7 @@
 # PhoenixLogin - Advanced Authentication System
 # Configuration File
 
-language: "es"
+language: "en"
 
 database:
   type: "SQLITE"

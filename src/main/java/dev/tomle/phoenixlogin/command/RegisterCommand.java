@@ -21,7 +21,8 @@ public class RegisterCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cEste comando solo puede ser usado por jugadores.");
+            sender.sendMessage(
+                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
             return true;
         }
 
@@ -35,7 +36,7 @@ public class RegisterCommand implements CommandExecutor {
         }
 
         if (args.length != 2) {
-            player.sendMessage(msg.colorize("&7Uso: &f/register <contraseña> <confirmar>"));
+            msg.sendMessage(player, "auth.register-usage");
             return true;
         }
 
@@ -61,7 +62,7 @@ public class RegisterCommand implements CommandExecutor {
                         "max", String.valueOf(maxLength));
                 msg.sendMessage(player, "auth.password-too-long", placeholders);
             } else {
-                player.sendMessage(msg.colorize("&cLa contraseña no cumple con los requisitos de seguridad."));
+                msg.sendMessage(player, "auth.password-requirements");
             }
 
             plugin.getEffectsManager().playErrorSound(player);
@@ -97,30 +98,16 @@ public class RegisterCommand implements CommandExecutor {
 
                         plugin.getSessionManager().setAuthenticated(player, true);
 
+                        player.getInventory().clear();
                         player.setWalkSpeed(0.2f);
                         player.setFlySpeed(0.1f);
 
-                        // RESTAURAR ubicación del jugador (desde VoidAuthWorld al mundo real)
-                        plugin.getLogger().info(">>> BEFORE restoreLocation for " + player.getName() +
-                                " - Current location: " + player.getLocation().getWorld().getName() +
-                                " (" + player.getLocation().getBlockX() + ", " +
-                                player.getLocation().getBlockY() + ", " +
-                                player.getLocation().getBlockZ() + ")");
-
                         plugin.getLocationManager().restoreLocation(player);
-
-                        plugin.getLogger().info(">>> AFTER restoreLocation for " + player.getName() +
-                                " - New location: " + player.getLocation().getWorld().getName() +
-                                " (" + player.getLocation().getBlockX() + ", " +
-                                player.getLocation().getBlockY() + ", " +
-                                player.getLocation().getBlockZ() + ")");
 
                         String joinMsg = "§e" + player.getName() + " joined the game";
                         plugin.getServer().broadcastMessage(joinMsg);
 
-                        // 🎵 DETENER MÚSICA
                         plugin.getMusicManager().stopMusic(player);
-
                         plugin.getEffectsManager().showRegisterSuccessTitle(player);
                         plugin.getEffectsManager().playRegisterSound(player);
                         plugin.getEffectsManager().playLoginParticles(player);
@@ -136,7 +123,6 @@ public class RegisterCommand implements CommandExecutor {
     private void handleFailedRegistration(Player player) {
         MessageManager msg = plugin.getMessageManager();
         plugin.getEffectsManager().playErrorSound(player);
-        player.sendMessage(
-                msg.colorize("&cHubo un error al registrar tu cuenta. Por favor contacta a un administrador."));
+        msg.sendMessage(player, "auth.register-failed");
     }
 }
