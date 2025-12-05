@@ -1,0 +1,95 @@
+# PhoenixLogin - English Messages
+
+prefix: "&6&lPhoenix&e&lLogin &8»&r"
+
+# Authentication messages
+auth:
+  please-register: "&cPlease register! &7Use: &f/register <password> <confirm>"
+  please-login: "&cPlease log in! &7Use: &f/login <password>"
+  already-logged: "&cYou are already logged in!"
+  not-registered: "&cYou are not registered! &7Use: &f/register <password> <confirm>"
+  already-registered: "&cYou already have a registered account!"
+
+  register-success: "&aAccount created successfully! Welcome."
+  login-success: "&aYou have logged in successfully! Enjoy the game."
+  logout-success: "&7You have logged out."
+
+  wrong-password: "&cWrong password! Remaining attempts: &e{attempts}"
+  password-mismatch: "&cPasswords do not match!"
+  password-too-short: "&cPassword must be at least &e{min}&c characters."
+  password-too-long: "&cPassword cannot be longer than &e{max}&c characters."
+
+  account-locked: "&cYour account has been locked for &e{duration}&c seconds due to multiple failed attempts!"
+  session-restored: "&aSession restored! You have been logged in automatically."
+
+# Captcha messages
+captcha:
+  title: "&6&lAnti-Bot Verification"
+  item-instruction: "&ePlace a &a{item} &ein slot &6#{slot} &eto continue."
+  math-instruction: "&eSolve: &f{question} &e= &f?"
+  success: "&aCaptcha completed correctly!"
+  failed: "&cIncorrect captcha! Try again."
+
+# Boss Bar
+bossbar:
+  please-login: "⚠ Log in within {time} seconds or you will be kicked"
+  please-register: "⚠ Register within {time} seconds or you will be kicked"
+  captcha: "🛡 Complete the captcha to play"
+
+# Titles
+titles:
+  welcome:
+    title: "&6&lWelcome"
+    subtitle: "&7Please authenticate your account"
+  login:
+    title: "&a&l✔ Authenticated"
+    subtitle: "&7Enjoy the game!"
+  register:
+    title: "&e&l★ Account Created"
+    subtitle: "&7Welcome to the server!"
+  error:
+    title: "&c&l✖ Error"
+    subtitle: "&7{message}"
+
+# Commands
+commands:
+  changepassword:
+    success: "&aPassword changed successfully!"
+    wrong-old: "&cCurrent password is incorrect!"
+    usage: "&7Usage: &f/changepassword <current_password> <new_password>"
+
+  unregister:
+    success: "&eYour account has been deleted!"
+    wrong-password: "&cIncorrect password!"
+    usage: "&7Usage: &f/unregister <password>"
+
+  admin:
+    reload: "&aConfiguration reloaded!"
+    user-info: "&7Information for &e{player}&7:\n  &8• &7Registered: &f{registered}\n  &8• &7IP: &f{ip}\n  &8• &7Last login: &f{last-login}"
+    unregister-player: "&7You have deleted &e{player}'s &7account."
+    reset-password: "&e{player}'s &7password reset to: &f{password}"
+    no-permission: "&cYou don't have permission to use this command!"
+    player-not-found: "&cPlayer not found!"
+
+# Block messages
+blocked:
+  movement: "&cYou cannot move until you authenticate."
+  command: "&cYou cannot use commands until you authenticate."
+  chat: "&cYou cannot chat until you authenticate."
+  interact: "&cYou cannot interact until you authenticate."
+
+# Kick messages
+kick:
+  timeout: "&cYou have been kicked!\n\n&7You did not authenticate in time.\n&7Please reconnect and log in."
+  captcha-failed: "&cYou have been kicked!\n\n&7You failed the anti-bot captcha.\n&7If you are a real player, reconnect."
+  too-many-attempts: "&cYou have been kicked!\n\n&7Too many failed login attempts.\n&7Wait &e{duration} &7seconds."
+
+# Discord messages
+discord:
+  new-register: "**New Registration**\nPlayer: {player}\nIP: {ip}\nDate: {date}"
+  suspicious-login: "**⚠️ Suspicious Login**\nPlayer: {player}\nNew IP: {ip}\nLast IP: {last-ip}\nDate: {date}"
+
+# Miscellaneous
+misc:
+  time-format: "{hours}h {minutes}m {seconds}s"
+  date-format: "MM/dd/yyyy HH:mm:ss"

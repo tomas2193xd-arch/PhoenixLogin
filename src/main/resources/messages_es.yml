@@ -1,0 +1,95 @@
+# PhoenixLogin - Mensajes en Español
+
+prefix: "&6&lPhoenix&e&lLogin &8»&r"
+
+# Mensajes de autenticación
+auth:
+  please-register: "&c¡Por favor regístrate! &7Usa: &f/register <contraseña> <confirmar>"
+  please-login: "&c¡Por favor inicia sesión! &7Usa: &f/login <contraseña>"
+  already-logged: "&c¡Ya has iniciado sesión!"
+  not-registered: "&c¡No estás registrado! &7Usa: &f/register <contraseña> <confirmar>"
+  already-registered: "&c¡Ya tienes una cuenta registrada!"
+
+  register-success: "&a¡Cuenta creada exitosamente! Bienvenido."
+  login-success: "&a¡Has iniciado sesión correctamente! Disfruta del juego."
+  logout-success: "&7Has cerrado sesión."
+
+  wrong-password: "&c¡Contraseña incorrecta! Intentos restantes: &e{attempts}"
+  password-mismatch: "&c¡Las contraseñas no coinciden!"
+  password-too-short: "&cLa contraseña debe tener al menos &e{min}&c caracteres."
+  password-too-long: "&cLa contraseña no puede tener más de &e{max}&c caracteres."
+
+  account-locked: "&c¡Tu cuenta ha sido bloqueada por &e{duration}&c segundos debido a múltiples intentos fallidos!"
+  session-restored: "&a¡Sesión restaurada! Has iniciado sesión automáticamente."
+
+# Mensajes de captcha
+captcha:
+  title: "&6&lVerificación Anti-Bot"
+  item-instruction: "&eColoca un &a{item} &een el slot &6#{slot} &epara continuar."
+  math-instruction: "&eResuelve: &f{question} &e= &f?"
+  success: "&a¡Captcha completado correctamente!"
+  failed: "&c¡Captcha incorrecto! Inténtalo de nuevo."
+
+# Boss Bar
+bossbar:
+  please-login: "⚠ Inicia sesión en {time} segundos o serás expulsado"
+  please-register: "⚠ Regístrate en {time} segundos o serás expulsado"
+  captcha: "🛡 Completa el captcha para jugar"
+
+# Titles
+titles:
+  welcome:
+    title: "&6&lBienvenido"
+    subtitle: "&7Por favor autentica tu cuenta"
+  login:
+    title: "&a&l✔ Autenticado"
+    subtitle: "&7¡Disfruta del juego!"
+  register:
+    title: "&e&l★ Cuenta Creada"
+    subtitle: "&7¡Bienvenido al servidor!"
+  error:
+    title: "&c&l✖ Error"
+    subtitle: "&7{message}"
+
+# Comandos
+commands:
+  changepassword:
+    success: "&a¡Contraseña cambiada exitosamente!"
+    wrong-old: "&c¡La contraseña actual es incorrecta!"
+    usage: "&7Uso: &f/changepassword <contraseña_actual> <nueva_contraseña>"
+
+  unregister:
+    success: "&e¡Tu cuenta ha sido eliminada!"
+    wrong-password: "&c¡Contraseña incorrecta!"
+    usage: "&7Uso: &f/unregister <contraseña>"
+
+  admin:
+    reload: "&a¡Configuración recargada!"
+    user-info: "&7Información de &e{player}&7:\n  &8• &7Registrado: &f{registered}\n  &8• &7IP: &f{ip}\n  &8• &7Último login: &f{last-login}"
+    unregister-player: "&7Has eliminado la cuenta de &e{player}&7."
+    reset-password: "&7Contraseña de &e{player} &7restablecida a: &f{password}"
+    no-permission: "&c¡No tienes permiso para usar este comando!"
+    player-not-found: "&c¡Jugador no encontrado!"
+
+# Mensajes de bloqueo
+blocked:
+  movement: "&cNo puedes moverte hasta autenticarte."
+  command: "&cNo puedes usar comandos hasta autenticarte."
+  chat: "&cNo puedes chatear hasta autenticarte."
+  interact: "&cNo puedes interactuar hasta autenticarte."
+
+# Mensajes de kick
+kick:
+  timeout: "&c¡Has sido expulsado!\n\n&7No te autenticaste a tiempo.\n&7Por favor reconecta e inicia sesión."
+  captcha-failed: "&c¡Has sido expulsado!\n\n&7Fallaste el captcha anti-bot.\n&7Si eres un jugador real, reconecta."
+  too-many-attempts: "&c¡Has sido expulsado!\n\n&7Demasiados intentos de inicio de sesión fallidos.\n&7Espera &e{duration} &7segundos."
+
+# Mensajes de Discord
+discord:
+  new-register: "**Nuevo Registro**\nJugador: {player}\nIP: {ip}\nFecha: {date}"
+  suspicious-login: "**⚠️ Login Sospechoso**\nJugador: {player}\nIP Nueva: {ip}\nÚltima IP: {last-ip}\nFecha: {date}"
+
+# Varios
+misc:
+  time-format: "{hours}h {minutes}m {seconds}s"
+  date-format: "dd/MM/yyyy HH:mm:ss"

@@ -1,0 +1,124 @@
+# PhoenixLogin - Advanced Authentication System
+# Configuration File
+
+language: "es"
+
+database:
+  type: "SQLITE"
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "phoenixlogin"
+    username: "root"
+    password: "password"
+    pool-size: 10
+
+security:
+  password:
+    min-length: 4
+    max-length: 32
+    require-uppercase: false
+    require-numbers: false
+    require-special: false
+  max-login-attempts: 3
+  lockout-duration: 300
+  sessions:
+    enabled: true
+    duration: 86400
+    remember-ip: true
+
+captcha:
+  enabled: true
+  type: "ITEM"
+  item:
+    required-item: "EMERALD"
+    target-slot: 4
+  math:
+    difficulty: "EASY"
+
+login:
+  freeze-player: true
+  block-movement: true
+  block-interact: true
+  block-damage: true
+  block-commands: true
+  auto-kick:
+    enabled: true
+    delay: 60
+  teleport-to-spawn: false
+  spawn-location:
+    world: "world"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+void-world:
+  enabled: true
+  world-name: "phoenixlogin_void"
+  fallback-to-spawn: true
+
+effects:
+  bossbar:
+    enabled: true
+    color: "RED"
+    style: "SOLID"
+  titles:
+    enabled: true
+    fade-in: 10
+    stay: 70
+    fade-out: 20
+  sounds:
+    on-login: "ENTITY_PLAYER_LEVELUP"
+    on-register: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    on-error: "ENTITY_VILLAGER_NO"
+  particles:
+    on-login: "VILLAGER_HAPPY"
+    on-error: "VILLAGER_ANGRY"
+
+login-music:
+  enabled: true
+
+  # OPTION 1: Vanilla Sounds (Default - No extra plugins needed)
+  use-nbs: false
+  sound: "MUSIC_DISC_CAT"
+  volume: 0.3
+  pitch: 1.0
+  loop-interval: 100
+
+  # OPTION 2: NBS Files (Requires NoteBlockAPI plugin)
+  # Download NoteBlockAPI: https://www.spigotmc.org/resources/noteblockapi.19287/
+  # Get .nbs files from:
+  #   - https://opennbs.org/
+  #   - https://www.minecraft-noteblock.com/
+  #   - Create your own with Note Block Studio
+  #
+  # How to use:
+  #   1. Install NoteBlockAPI plugin
+  #   2. Place your .nbs file in: plugins/PhoenixLogin/music/
+  #   3. Set filename below
+  #   4. Set use-nbs: true
+  #   5. Restart and enjoy!
+  nbs-file: "login.nbs"
+  nbs-volume: 1.0
+
+premium:
+  enabled: false
+  auto-login: false
+
+discord:
+  enabled: false
+  webhook-url: ""
+  notify-new-register: true
+  notify-suspicious-login: true
+
+advanced:
+  two-factor:
+    enabled: false
+  ip-filtering:
+    enabled: false
+  logging:
+    enabled: true
+    log-file: "phoenixlogin.log"
+    log-level: "INFO"

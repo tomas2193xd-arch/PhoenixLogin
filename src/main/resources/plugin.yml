@@ -1,0 +1,80 @@
+name: PhoenixLogin
+version: "${project.version}"
+main: dev.tomle.phoenixlogin.PhoenixLogin
+api-version: "1.19"
+author: TomLe
+description: Advanced Authentication System with Multi-Language Support
+
+commands:
+  login:
+    description: Login to your account
+    aliases: [l]
+    usage: /<command> <password>
+
+  register:
+    description: Register a new account
+    aliases: [reg]
+    usage: /<command> <password> <confirm>
+
+  changepassword:
+    description: Change your password
+    aliases: [changepass, cp]
+    usage: /<command> <old> <new>
+
+  unregister:
+    description: Delete your account
+    usage: /<command> <password>
+name: PhoenixLogin
+version: "${project.version}"
+main: dev.tomle.phoenixlogin.PhoenixLogin
+api-version: "1.19"
+author: TomLe
+description: Advanced Authentication System with Multi-Language Support
+
+commands:
+  login:
+    description: Login to your account
+    aliases: [l]
+    usage: /<command> <password>
+
+  register:
+    description: Register a new account
+    aliases: [reg]
+    usage: /<command> <password> <confirm>
+
+  changepassword:
+    description: Change your password
+    aliases: [changepass, cp]
+    usage: /<command> <old> <new>
+
+  unregister:
+    description: Delete your account
+    usage: /<command> <password>
+
+  phoenixlogin:
+    description: Main admin command
+    aliases: [plogin, pl]
+    usage: /<command>
+    permission: phoenixlogin.admin
+  
+  setspawn:
+    description: Set the login spawn location
+    usage: /<command>
+    permission: phoenixlogin.setspawn
+
+permissions:
+  phoenixlogin.admin:
+    description: Access to all admin commands
+    default: op
+  
+  phoenixlogin.setspawn:
+    description: Set login spawn location
+    default: op
+  
+  phoenixlogin.bypass:
+    description: Bypass login requirement
+    default: false
+  
+  phoenixlogin.premium:
+    description: Auto-login for premium accounts
+    default: false

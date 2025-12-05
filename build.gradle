@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'dev.tomle'
+version = '1.0.0'
+description = 'PhoenixLogin - Advanced Authentication System'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    // Spigot API
+    compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+    
+    // Adventure API para mensajes modernos
+    implementation 'net.kyori:adventure-platform-bukkit:4.3.2'
+    implementation 'net.kyori:adventure-text-minimessage:4.16.0'
+    
+    // HikariCP para conexiones MySQL
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    
+    // BCrypt para hashing
+    implementation 'at.favre.lib:bcrypt:0.10.2'
+    
+    // SLF4J
+    implementation 'org.slf4j:slf4j-api:2.0.12'
+    implementation 'org.slf4j:slf4j-simple:2.0.12'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    
+    relocate 'net.kyori', 'dev.tomle.phoenixlogin.libs.kyori'
+    relocate 'com.zaxxer.hikari', 'dev.tomle.phoenixlogin.libs.hikari'
+    relocate 'at.favre.lib.crypto', 'dev.tomle.phoenixlogin.libs.bcrypt'
+    relocate 'org.slf4j', 'dev.tomle.phoenixlogin.libs.slf4j'
+    
+    minimize()
+}
+
+build {
+    dependsOn shadowJar
+}
