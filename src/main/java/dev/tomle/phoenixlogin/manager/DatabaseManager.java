@@ -290,4 +290,22 @@ public class DatabaseManager {
             }
         });
     }
+
+    /**
+     * Obtiene el número total de jugadores registrados
+     */
+    public int getRegisteredPlayersCount() {
+        try (Connection conn = getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + tablePrefix + "players")) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Could not fetch registered players count");
+        }
+        return 0;
+    }
 }

@@ -25,9 +25,9 @@ public class PhoenixLogin extends JavaPlugin {
     @Override
     public void onEnable() {
         long startTime = System.currentTimeMillis();
-        getLogger().info("=================================");
-        getLogger().info("  PhoenixLogin - Starting...");
-        getLogger().info("=================================");
+
+        // Mostrar banner épico
+        dev.tomle.phoenixlogin.util.ConsoleLogger.showBanner(getDescription().getVersion());
 
         this.adventure = BukkitAudiences.create(this);
 
@@ -43,25 +43,25 @@ public class PhoenixLogin extends JavaPlugin {
 
         // Initialize API for external plugins
         PhoenixLoginAPI.initialize(this);
-        getLogger().info("API initialized successfully!");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.success("API initialized successfully");
 
         registerCommands();
         registerListeners();
 
+        // Mostrar estadísticas
+        int playerCount = databaseManager.getRegisteredPlayersCount();
+        String dbType = configManager.getDatabaseType().toUpperCase();
+        String language = configManager.getLanguage().toUpperCase();
+
+        dev.tomle.phoenixlogin.util.ConsoleLogger.showStartupStats(playerCount, dbType, language);
+
         long loadTime = System.currentTimeMillis() - startTime;
-        getLogger().info("=================================");
-        getLogger().info("  PhoenixLogin - Enabled!");
-        getLogger().info("  Language: " + configManager.getLanguage());
-        getLogger().info("  Database: " + configManager.getDatabaseType());
-        getLogger().info("  Load time: " + loadTime + "ms");
-        getLogger().info("=================================");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.loaded(loadTime);
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("=================================");
-        getLogger().info("  PhoenixLogin - Disabling...");
-        getLogger().info("=================================");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.shutdown();
 
         if (worldManager != null) {
             worldManager.shutdown();
@@ -80,13 +80,11 @@ public class PhoenixLogin extends JavaPlugin {
             adventure = null;
         }
 
-        getLogger().info("=================================");
-        getLogger().info("  PhoenixLogin - Disabled!");
-        getLogger().info("=================================");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Plugin disabled successfully");
     }
 
     private void initializeManagers() {
-        getLogger().info("Initializing managers...");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[95m⚙ Initializing managers...[0m");
 
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
@@ -102,11 +100,11 @@ public class PhoenixLogin extends JavaPlugin {
         databaseManager.initialize();
         worldManager.initialize();
 
-        getLogger().info("All managers initialized successfully!");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.showFeatures();
     }
 
     private void registerCommands() {
-        getLogger().info("Registering commands...");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[94m⚡ Registering commands...[0m");
 
         getCommand("login").setExecutor(new LoginCommand(this));
         getCommand("register").setExecutor(new RegisterCommand(this));
@@ -116,17 +114,17 @@ public class PhoenixLogin extends JavaPlugin {
         getCommand("phoenixlogin").setExecutor(new AdminCommand(this));
         getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
 
-        getLogger().info("Commands registered successfully!");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Commands registered (7 total)");
     }
 
     private void registerListeners() {
-        getLogger().info("Registering listeners...");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[94m⚡ Registering event listeners...[0m");
 
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new CaptchaListener(this), this);
 
-        getLogger().info("Listeners registered successfully!");
+        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Event listeners registered (3 total)");
     }
 
     public BukkitAudiences adventure() {
