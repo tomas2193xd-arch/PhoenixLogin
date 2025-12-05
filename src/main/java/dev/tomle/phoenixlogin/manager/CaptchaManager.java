@@ -15,6 +15,7 @@ public class CaptchaManager {
     private final PhoenixLogin plugin;
     private final Random random;
     private final Map<UUID, CaptchaData> activeCaptchas;
+    private final MapCaptchaManager mapCaptchaManager;
 
     // Lista de items posibles para captcha
     private static final Material[] CAPTCHA_ITEMS = {
@@ -32,6 +33,7 @@ public class CaptchaManager {
         this.plugin = plugin;
         this.random = new Random();
         this.activeCaptchas = new ConcurrentHashMap<>();
+        this.mapCaptchaManager = new MapCaptchaManager(plugin);
     }
 
     public boolean isCaptchaRequired() {
@@ -50,12 +52,21 @@ public class CaptchaManager {
             case "MATH":
                 captcha = generateMathCaptcha();
                 break;
+            case "MAP":
+                generateMapCaptcha(player);
+                return; // MAP captcha se maneja diferente
             default:
                 captcha = generateItemCaptcha();
         }
 
         activeCaptchas.put(player.getUniqueId(), captcha);
         displayCaptcha(player, captcha);
+    }
+
+    private void generateMapCaptcha(Player player) {
+        String code = mapCaptchaManager.createCaptcha(player);
+        // El MapCaptchaManager maneja todo internamente
+        plugin.getEffectsManager().showCaptchaBossBar(player);
     }
 
     private CaptchaData generateItemCaptcha() {
@@ -132,6 +143,11 @@ public class CaptchaManager {
     }
 
     public boolean verifyCaptcha(Player player, Object answer) {
+        // Primero verificar si es MAP captcha
+        if (mapCaptchaManager.hasCaptcha(player)) {
+            return mapCaptchaManager.verifyCaptcha(player, answer.toString());
+        }
+
         CaptchaData captcha = activeCaptchas.get(player.getUniqueId());
 
         if (captcha == null) {
@@ -166,11 +182,12 @@ public class CaptchaManager {
     }
 
     public boolean hasPendingCaptcha(Player player) {
-        return activeCaptchas.containsKey(player.getUniqueId());
+        return activeCaptchas.containsKey(player.getUniqueId()) || mapCaptchaManager.hasCaptcha(player);
     }
 
     public void removeCaptcha(Player player) {
         activeCaptchas.remove(player.getUniqueId());
+        mapCaptchaManager.removeCaptcha(player);
     }
 
     // === INNER CLASSES ===

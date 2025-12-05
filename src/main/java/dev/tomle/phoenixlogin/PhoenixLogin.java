@@ -3,6 +3,7 @@ package dev.tomle.phoenixlogin;
 import dev.tomle.phoenixlogin.manager.*;
 import dev.tomle.phoenixlogin.listener.*;
 import dev.tomle.phoenixlogin.command.*;
+import dev.tomle.phoenixlogin.api.PhoenixLoginAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,6 +40,11 @@ public class PhoenixLogin extends JavaPlugin {
         saveResource("messages_en.yml", false);
 
         initializeManagers();
+
+        // Initialize API for external plugins
+        PhoenixLoginAPI.initialize(this);
+        getLogger().info("API initialized successfully!");
+
         registerCommands();
         registerListeners();
 

@@ -29,7 +29,7 @@ security:
 
 captcha:
   enabled: true
-  type: "ITEM"
+  type: "MAP" # ITEM, MATH, or MAP (recommended for professional servers)
   item:
     required-item: "EMERALD"
     target-slot: 4
