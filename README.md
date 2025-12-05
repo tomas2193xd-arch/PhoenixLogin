@@ -1,7 +1,6 @@
 # PhoenixLogin
 
 <div align="center">
-  <img src="https://imgur.com/a/WyI2AGP" alt="PhoenixLogin Banner" width="800"/>
   
   ### Advanced Authentication System for Minecraft
   
