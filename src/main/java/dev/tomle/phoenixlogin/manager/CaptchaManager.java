@@ -190,6 +190,20 @@ public class CaptchaManager {
         mapCaptchaManager.removeCaptcha(player);
     }
 
+    /**
+     * Limpia completamente los items de captcha (Mapa, Items de Drag&Drop, etc.)
+     * Debe llamarse ANTES de restaurar el inventario original.
+     */
+    public void clearCaptchaItems(Player player) {
+        // Enforce cleanup
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        player.getInventory().setItemInOffHand(null);
+
+        // Remove active sessions
+        removeCaptcha(player);
+    }
+
     public boolean hasCaptcha(Player player) {
         return hasPendingCaptcha(player);
     }

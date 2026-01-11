@@ -3,23 +3,23 @@ package dev.tomle.phoenixlogin.util;
 import org.bukkit.Bukkit;
 
 /**
- * Sistema de logging profesional con colores ANSI y ASCII art
- * Hace que los logs del plugin se vean hermosos en la consola
+ * Professional logging system with ANSI colors and ASCII art
+ * Making plugin logs look stunning in the console.
  */
 public class ConsoleLogger {
 
-    // Códigos de color ANSI
+    // ANSI Color Codes
     private static final String RESET = "\u001B[0m";
-    private static final String BLACK = "\u001B[30m";
+    // private static final String BLACK = "\u001B[30m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
-    private static final String BLUE = "\u001B[34m";
+    // private static final String BLUE = "\u001B[34m";
     private static final String PURPLE = "\u001B[35m";
     private static final String CYAN = "\u001B[36m";
     private static final String WHITE = "\u001B[37m";
 
-    // Colores brillantes
+    // Bright Colors (High Intensity)
     private static final String BRIGHT_RED = "\u001B[91m";
     private static final String BRIGHT_GREEN = "\u001B[92m";
     private static final String BRIGHT_YELLOW = "\u001B[93m";
@@ -28,174 +28,148 @@ public class ConsoleLogger {
     private static final String BRIGHT_CYAN = "\u001B[96m";
     private static final String BRIGHT_WHITE = "\u001B[97m";
 
-    // Estilos
+    // Styles
     private static final String BOLD = "\u001B[1m";
-    private static final String UNDERLINE = "\u001B[4m";
+    // private static final String UNDERLINE = "\u001B[4m";
 
-    // Prefijo del plugin
-    private static final String PREFIX = BRIGHT_CYAN + "[" + BRIGHT_YELLOW + "PhoenixLogin" + BRIGHT_CYAN + "]" + RESET;
+    // Plugin Prefix with Gradient-like effect
+    private static final String PREFIX = BRIGHT_RED + "P" + BRIGHT_YELLOW + "hoenix" + BRIGHT_RED + "L" + BRIGHT_YELLOW
+            + "ogin" + RESET;
+    private static final String PREFIX_FORMAT = BRIGHT_RED + "[" + BRIGHT_YELLOW + "PhoenixLogin" + BRIGHT_RED + "] "
+            + RESET;
 
     /**
-     * Muestra el banner épico del plugin al iniciar
+     * Shows the EPIC banner on startup.
+     * Designed to be extremely flashy and noticeable.
      */
     public static void showBanner(String version) {
         String[] banner = {
                 "",
-                BRIGHT_YELLOW + "    ____  __                   _       __                _       ",
-                BRIGHT_YELLOW + "   / __ \\/ /_  ____  ___  ____(_)  __ / /   ____  ____ _(_)___   ",
-                BRIGHT_RED + "  / /_/ / __ \\/ __ \\/ _ \\/ __ / / |/_// /   / __ \\/ __ `/ / __ \\  ",
-                BRIGHT_RED + " / ____/ / / / /_/ /  __/ / / / />  < / /___/ /_/ / /_/ / / / / /  ",
-                BRIGHT_RED + "/_/   /_/ /_/\\____/\\___/_/ /_/_/_/|_|/_____/\\____/\\__, /_/_/ /_/   ",
-                BRIGHT_YELLOW + "                                                /____/            " + RESET,
+                BRIGHT_RED + " ██████╗ ██╗  ██╗ ██████╗ ███████╗███╗   ██╗██╗██╗  ██╗",
+                BRIGHT_RED + " ██╔══██╗██║  ██║██╔═══██╗██╔════╝████╗  ██║██║╚██╗██╔╝",
+                BRIGHT_YELLOW + " ██████╔╝███████║██║   ██║█████╗  ██╔██╗ ██║██║ ╚███╔╝ ",
+                BRIGHT_YELLOW + " ██╔═══╝ ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║██║ ██╔██╗ ",
+                BRIGHT_RED + " ██║     ██║  ██║╚██████╔╝███████╗██║ ╚████║██║██╔╝ ██╗",
+                BRIGHT_RED + " ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝",
+                BRIGHT_YELLOW + "             L   O   G   I   N       S   Y   S   T   E   M   ",
                 "",
-                BRIGHT_CYAN + "    ╔═══════════════════════════════════════════════════════════╗",
-                BRIGHT_CYAN + "    ║  " + BRIGHT_WHITE + BOLD + "Advanced Authentication System for Minecraft" + RESET
-                        + BRIGHT_CYAN + "          ║",
-                BRIGHT_CYAN + "    ║  " + BRIGHT_GREEN + "Version: " + BRIGHT_WHITE + version + RESET + BRIGHT_CYAN
-                        + "                                          ║",
-                BRIGHT_CYAN + "    ║  " + BRIGHT_GREEN + "Author: " + BRIGHT_WHITE + "TomLe (Tomas2193)" + RESET
-                        + BRIGHT_CYAN + "                        ║",
-                BRIGHT_CYAN + "    ║  " + BRIGHT_GREEN + "GitHub: " + BRIGHT_WHITE
-                        + "github.com/tomas2193xd-arch/PhoenixLogin" + RESET + BRIGHT_CYAN + " ║",
-                BRIGHT_CYAN + "    ╚═══════════════════════════════════════════════════════════╝" + RESET,
+                BRIGHT_RED + " ╔════════════════════════════════════════════════════════════════════╗",
+                BRIGHT_RED + " ║ " + BRIGHT_YELLOW + "⚠  ULTIMATE SERVER PROTECTION SYSTEM ACTIVATED  ⚠ " + BRIGHT_RED
+                        + "                 ║",
+                BRIGHT_RED + " ║                                                                    ║",
+                BRIGHT_RED + " ║ " + BRIGHT_WHITE + "  ▸ Version: " + BRIGHT_GREEN + String.format("%-15s", version)
+                        + BRIGHT_RED + "                                  ║",
+                BRIGHT_RED + " ║ " + BRIGHT_WHITE + "  ▸ Author:  " + BRIGHT_PURPLE + String.format("%-15s", "TomLe")
+                        + BRIGHT_RED + "                                  ║",
+                BRIGHT_RED + " ║ " + BRIGHT_WHITE + "  ▸ Status:  " + BRIGHT_CYAN + "INITIALIZING..." + BRIGHT_RED
+                        + "                                  ║",
+                BRIGHT_RED + " ║                                                                    ║",
+                BRIGHT_RED + " ╚════════════════════════════════════════════════════════════════════╝" + RESET,
                 ""
         };
 
         for (String line : banner) {
-            Bukkit.getConsoleSender().sendMessage(line + RESET);
+            Bukkit.getConsoleSender().sendMessage(line);
         }
     }
 
     /**
-     * Muestra el logo alternativo (más compacto) del phoenix
-     */
-    public static void showCompactLogo() {
-        String[] logo = {
-                "",
-                BRIGHT_RED + "         ▄▀▀▀▀▀▀▀▀▀▀▄",
-                BRIGHT_RED + "        █" + BRIGHT_YELLOW + "  ◣     ◢  " + BRIGHT_RED + "█",
-                BRIGHT_YELLOW + "        █" + BRIGHT_RED + "   ▀▄ ▄▀   " + BRIGHT_YELLOW + "█",
-                BRIGHT_YELLOW + "         █" + BRIGHT_RED + "   ███   " + BRIGHT_YELLOW + "█",
-                BRIGHT_YELLOW + "          ▀▄" + BRIGHT_RED + " ███ " + BRIGHT_YELLOW + "▄▀     " + BRIGHT_CYAN
-                        + "PhoenixLogin",
-                BRIGHT_RED + "            ▀███▀      " + BRIGHT_WHITE + "Your server, your rules",
-                RESET
-        };
-
-        for (String line : logo) {
-            Bukkit.getConsoleSender().sendMessage(line + RESET);
-        }
-    }
-
-    /**
-     * Log de información general
+     * General info log
      */
     public static void info(String message) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + " " + BRIGHT_WHITE + message + RESET);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_FORMAT + BRIGHT_WHITE + message + RESET);
     }
 
     /**
-     * Log de éxito
+     * Success log with checkmark
      */
     public static void success(String message) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + " " + BRIGHT_GREEN + "✓ " + message + RESET);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_FORMAT + BRIGHT_GREEN + "✔ " + message + RESET);
     }
 
     /**
-     * Log de advertencia
+     * Warning log
      */
     public static void warn(String message) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + " " + BRIGHT_YELLOW + "⚠ " + message + RESET);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_FORMAT + BRIGHT_YELLOW + "⚠ " + message + RESET);
     }
 
     /**
-     * Log de error
+     * Error log
      */
     public static void error(String message) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + " " + BRIGHT_RED + "✖ " + message + RESET);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_FORMAT + BRIGHT_RED + "✖ " + message + RESET);
     }
 
     /**
-     * Log de debug (con símbolo especial)
+     * Debug log
      */
     public static void debug(String message) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + " " + BRIGHT_PURPLE + "◆ [DEBUG] " + message + RESET);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_FORMAT + BRIGHT_PURPLE + "◆ [DEBUG] " + message + RESET);
     }
 
     /**
-     * Log de seguridad (eventos importantes)
-     */
-    public static void security(String message) {
-        Bukkit.getConsoleSender()
-                .sendMessage(PREFIX + " " + BRIGHT_RED + "🛡 [SECURITY] " + BRIGHT_WHITE + message + RESET);
-    }
-
-    /**
-     * Muestra una línea separadora bonita
+     * Shows a beautiful separator line
      */
     public static void separator() {
-        Bukkit.getConsoleSender()
-                .sendMessage(BRIGHT_CYAN + "    ═══════════════════════════════════════════════════════════" + RESET);
+        Bukkit.getConsoleSender().sendMessage(
+                BRIGHT_RED + " ══════════════════════════════════════════════════════════════════════" + RESET);
     }
 
     /**
-     * Muestra estadísticas de inicio
+     * Shows startup statistics (Dashboard style)
      */
     public static void showStartupStats(int players, String database, String language) {
         separator();
-        info(BRIGHT_CYAN + "▸ " + BRIGHT_WHITE + "Database Type: " + BRIGHT_GREEN + database);
-        info(BRIGHT_CYAN + "▸ " + BRIGHT_WHITE + "Default Language: " + BRIGHT_GREEN + language);
-        info(BRIGHT_CYAN + "▸ " + BRIGHT_WHITE + "Registered Players: " + BRIGHT_GREEN + players);
-        info(BRIGHT_CYAN + "▸ " + BRIGHT_WHITE + "Security Level: " + BRIGHT_GREEN + "Maximum");
+        Bukkit.getConsoleSender().sendMessage(BRIGHT_YELLOW + "   [ STATISTICS DASHBOARD ]");
+        Bukkit.getConsoleSender().sendMessage("");
+
+        info(BRIGHT_WHITE + "Database:      " + BRIGHT_CYAN + database.toUpperCase());
+        info(BRIGHT_WHITE + "Language:      " + BRIGHT_CYAN + language.toUpperCase());
+        info(BRIGHT_WHITE + "Total Users:   " + BRIGHT_GREEN + players);
+        info(BRIGHT_WHITE + "Security:      " + BRIGHT_RED + BOLD + "MAXIMUM");
         separator();
     }
 
     /**
-     * Muestra las características cargadas
+     * Shows loaded features list
      */
     public static void showFeatures() {
-        info(BRIGHT_PURPLE + "Loading features:" + RESET);
-        success("BCrypt Password Encryption");
-        success("Anti-Bot Captcha System");
-        success("Void Authentication World");
-        success("Session Management");
-        success("Brute-Force Protection");
-        success("Multi-Language Support");
+        Bukkit.getConsoleSender().sendMessage("");
+        info(BRIGHT_YELLOW + "⚡ ENABLED MODULES:");
+        success("BCrypt Encryption       " + BRIGHT_GREEN + "[ACTIVE]");
+        success("Anti-Bot System         " + BRIGHT_GREEN + "[ACTIVE]");
+        success("Void Authentication     " + BRIGHT_GREEN + "[ACTIVE]");
+        success("Session Manager         " + BRIGHT_GREEN + "[ACTIVE]");
+        success("Inventory Protection    " + BRIGHT_GREEN + "[ACTIVE]");
+        Bukkit.getConsoleSender().sendMessage("");
     }
 
     /**
-     * Mensaje de carga completada
+     * Message when loading is complete
      */
     public static void loaded(long loadTime) {
         separator();
         Bukkit.getConsoleSender().sendMessage(
-                BRIGHT_CYAN + "    ║ " + BRIGHT_GREEN + BOLD + "✓ Plugin loaded successfully in " + loadTime + "ms"
-                        + RESET + BRIGHT_CYAN + "");
+                BRIGHT_RED + " ║ " + BRIGHT_GREEN + BOLD + "✔ PLUGIN SUCCESSFULLY ENABLED" + RESET
+                        + BRIGHT_WHITE + " (" + loadTime + "ms)" + RESET);
         Bukkit.getConsoleSender().sendMessage(
-                BRIGHT_CYAN + "    ║ " + BRIGHT_YELLOW + "Ready to protect your server!" + RESET);
+                BRIGHT_RED + " ║ " + BRIGHT_YELLOW + "READY TO PROTECT YOUR SERVER." + RESET);
         separator();
         Bukkit.getConsoleSender().sendMessage("");
     }
 
     /**
-     * Mensaje de desactivación
+     * Shutdown message
      */
     public static void shutdown() {
         Bukkit.getConsoleSender().sendMessage("");
         separator();
         Bukkit.getConsoleSender().sendMessage(
-                BRIGHT_CYAN + "    ║ " + BRIGHT_YELLOW + "◈ " + BRIGHT_WHITE + "PhoenixLogin is shutting down..."
-                        + RESET);
+                BRIGHT_RED + " ║ " + BRIGHT_YELLOW + "⚠ " + BRIGHT_WHITE + "PhoenixLogin is shutting down..." + RESET);
+        Bukkit.getConsoleSender().sendMessage(
+                BRIGHT_RED + " ║ " + BRIGHT_WHITE + "   Good bye!" + RESET);
         separator();
         Bukkit.getConsoleSender().sendMessage("");
-    }
-
-    /**
-     * Muestra información de un jugador (login/register)
-     */
-    public static void playerAction(String action, String player, String ip) {
-        Bukkit.getConsoleSender().sendMessage(
-                PREFIX + " " + BRIGHT_CYAN + action + " " + BRIGHT_WHITE + player +
-                        BRIGHT_CYAN + " from " + BRIGHT_YELLOW + ip + RESET);
     }
 }

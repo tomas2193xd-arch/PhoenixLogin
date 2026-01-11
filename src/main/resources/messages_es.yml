@@ -59,6 +59,9 @@ captcha:
   next-step-login: "&eAhora por favor ingresa: &f/login <contraseña>"
   next-step-register: "&eAhora por favor regístrate: &f/register <contraseña> <confirmar>"
 
+  # Mensaje requerido (nuevo)
+  required: "&c¡Debes resolver el Captcha primero! Mira tu mapa."
+
 # ======================================================
 # ACCIONES BLOQUEADAS (cuando no está autenticado)
 # ======================================================

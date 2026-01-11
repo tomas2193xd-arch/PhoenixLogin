@@ -46,6 +46,13 @@ public class ConnectionListener implements Listener {
 
         event.setJoinMessage(null);
 
+        // 🛡 CRÍTICO: Ocultar inventario INMEDIATAMENTE para evitar glitch visual
+        // Guardamos copia de seguridad si no existe una ya (previniendo sobreescritura
+        // de inventario vacío)
+        if (!player.hasPermission("phoenixlogin.bypass")) {
+            plugin.getInventoryManager().cacheAndClearInventory(player);
+        }
+
         plugin.getDatabaseManager().loadPlayerDataAsync(player.getName())
                 .thenAccept(data -> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -56,6 +63,14 @@ public class ConnectionListener implements Listener {
                         // Verificar bypass ANTES de cualquier teleport
                         if (player.hasPermission("phoenixlogin.bypass")) {
                             plugin.getSessionManager().setAuthenticated(player, true);
+                            // Restaurar inventario si fue ocultado (por si acaso la perm no estaba lista
+                            // antes, aunque lo chequeamos arriba)
+                            // Nota: Si arriba no entró al if, aquí no hay nada que restaurar porque no se
+                            // borró.
+                            // Pero si la perm cambió o algo raro:
+                            // plugin.getInventoryManager().restoreInventory(player);
+                            // Lo dejaremos asimétrico: Si tiene bypass, arriba NO limpiamos.
+
                             showJoinMessage(player);
                             plugin.getLogger()
                                     .info(player.getName() + " bypassed authentication (has bypass permission).");
@@ -68,6 +83,9 @@ public class ConnectionListener implements Listener {
 
                             player.setWalkSpeed(0.2f);
                             player.setFlySpeed(0.1f);
+
+                            // ✅ Restaurar inventario al restaurar sesión
+                            plugin.getInventoryManager().restoreInventory(player);
 
                             msg.sendMessage(player, "auth.session-restored");
                             plugin.getEffectsManager().playLoginSound(player);
@@ -107,11 +125,11 @@ public class ConnectionListener implements Listener {
         // (Jugadores nuevos spawnean en void, no queremos guardar eso)
         if (!currentWorld.equals(voidWorldName)) {
             plugin.getLocationManager().saveLocation(player);
-            plugin.getLogger().info("Saved location for " + player.getName() +
-                    " (not in void): " + currentWorld);
+            // plugin.getLogger().info("Saved location for " + player.getName() + " (not in
+            // void): " + currentWorld);
         } else {
-            plugin.getLogger().info("Skipped saving location for " + player.getName() +
-                    " (already in void)");
+            // plugin.getLogger().info("Skipped saving location for " + player.getName() + "
+            // (already in void)");
         }
 
         // Verificar si VoidAuthWorld está activado
@@ -119,9 +137,10 @@ public class ConnectionListener implements Listener {
             // Solo teletransportar si NO está ya en el void
             if (!currentWorld.equals(voidWorldName)) {
                 plugin.getWorldManager().teleportToVoid(player);
-                plugin.getLogger().info(player.getName() + " teleported to VoidAuthWorld for authentication.");
+                // plugin.getLogger().info(player.getName() + " teleported to VoidAuthWorld for
+                // authentication.");
             } else {
-                plugin.getLogger().info(player.getName() + " already in VoidAuthWorld.");
+                // plugin.getLogger().info(player.getName() + " already in VoidAuthWorld.");
             }
         } else {
             // Fallback: usar el sistema de spawn tradicional
@@ -129,7 +148,8 @@ public class ConnectionListener implements Listener {
                 Location spawnLoc = plugin.getConfigManager().getSpawnLocation();
                 if (spawnLoc != null) {
                     player.teleport(spawnLoc);
-                    plugin.getLogger().info(player.getName() + " teleported to spawn (VoidWorld disabled).");
+                    // plugin.getLogger().info(player.getName() + " teleported to spawn (VoidWorld
+                    // disabled).");
                 }
             }
         }
@@ -151,7 +171,8 @@ public class ConnectionListener implements Listener {
 
         plugin.getEffectsManager().showWelcomeTitle(player);
 
-        if (plugin.getCaptchaManager().isCaptchaRequired() && !data.isRegistered()) {
+        // 🛡 CAPTCHA OBLIGATORIO PARA TODOS (registrados y nuevos)
+        if (plugin.getCaptchaManager().isCaptchaRequired()) {
             plugin.getCaptchaManager().generateCaptcha(player);
 
             if (plugin.getConfigManager().isAutoKickEnabled()) {
@@ -160,6 +181,7 @@ public class ConnectionListener implements Listener {
             return;
         }
 
+        // Si captcha está desactivado, mostrar mensaje apropiado
         if (data.isRegistered()) {
             msg.sendMessage(player, "auth.please-login");
 

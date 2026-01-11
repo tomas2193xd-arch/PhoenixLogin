@@ -35,6 +35,13 @@ public class RegisterCommand implements CommandExecutor {
             return true;
         }
 
+        // 🛡 BLOQUEO: Si tiene captcha pendiente, DEBE completarlo antes de registrarse
+        if (plugin.getCaptchaManager().hasPendingCaptcha(player)) {
+            msg.sendMessage(player, "captcha.required");
+            plugin.getEffectsManager().playErrorSound(player);
+            return true;
+        }
+
         if (args.length != 2) {
             msg.sendMessage(player, "auth.register-usage");
             return true;
@@ -98,11 +105,17 @@ public class RegisterCommand implements CommandExecutor {
 
                         plugin.getSessionManager().setAuthenticated(player, true);
 
-                        player.getInventory().clear();
+                        // player.getInventory().clear();
                         player.setWalkSpeed(0.2f);
                         player.setFlySpeed(0.1f);
 
                         plugin.getLocationManager().restoreLocation(player);
+
+                        // 🛡 LIMPIEZA: Borrar items de Auth/Captcha ANTES de restaurar
+                        plugin.getCaptchaManager().clearCaptchaItems(player);
+
+                        // ✅ Restaurar inventario tras registro
+                        plugin.getInventoryManager().restoreInventory(player);
 
                         String joinMsg = "§e" + player.getName() + " joined the game";
                         plugin.getServer().broadcastMessage(joinMsg);

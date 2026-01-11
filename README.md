@@ -21,6 +21,8 @@
 
 ### 🔐 Complete Authentication System
 - **Secure Registration & Login** with BCrypt password encryption
+- **Two-Factor Authentication (2FA)** with Discord integration
+- **Login History Tracking** with detailed analytics
 - **Session Management** with configurable IP memory
 - **Brute-Force Protection** with temporary account lockout
 - **In-Game Password Management** (change/delete accounts)
@@ -29,6 +31,7 @@
 
 ### 🤖 Advanced Anti-Bot Protection
 - **Item Captcha System**: Players must place a specific item in a designated slot
+- **Map Captcha System**: Professional map-based verification
 - **Math Captcha** (coming soon): Solve simple math operations
 - **Configurable Difficulty**: Adjust to your server's needs
 - **Effective Bot Prevention**: Stop automated attacks
@@ -90,12 +93,15 @@ Click to watch the full demonstration video!
 ## 🎯 Commands
 
 ### Player Commands
-| Command                          | Aliases              | Description            |
-| -------------------------------- | -------------------- | ---------------------- |
-| `/login <password>`              | `/l`                 | Log into your account  |
-| `/register <password> <confirm>` | `/reg`               | Register a new account |
-| `/changepassword <old> <new>`    | `/changepass`, `/cp` | Change your password   |
-| `/unregister <password>`         | -                    | Delete your account    |
+| Command                          | Aliases                 | Description            |
+| -------------------------------- | ----------------------- | ---------------------- |
+| `/login <password>`              | `/l`                    | Log into your account  |
+| `/register <password> <confirm>` | `/reg`                  | Register a new account |
+| `/captcha <code>`                | -                       | Verify captcha code    |
+| `/verify <code>`                 | -                       | Verify 2FA code        |
+| `/changepassword <old> <new>`    | `/changepass`, `/cp`    | Change your password   |
+| `/unregister <password>`         | -                       | Delete your account    |
+| `/loginhistory [player]`         | `/lhistory`, `/history` | View login history     |
 
 ### Admin Commands
 | Command         | Aliases          | Description              |
@@ -156,6 +162,53 @@ void-world:
   fallback-to-spawn: true             # Fallback if world fails
 ```
 
+### Two-Factor Authentication (2FA)
+```yaml
+two-factor:
+  enabled: false                      # Enable 2FA system
+  discord-webhook: ""                 # Discord webhook URL for codes
+  require-for-new-ips: true          # Require 2FA when logging from new IP
+  require-for-all: false             # Always require 2FA (more secure)
+```
+
+**How to set up 2FA with Discord:**
+
+1. **Create a Discord Webhook:**
+   - Go to your Discord server
+   - Edit a channel → Integrations → Webhooks
+   - Click "New Webhook"
+   - Copy the Webhook URL
+
+2. **Configure PhoenixLogin:**
+   ```yaml
+   two-factor:
+     enabled: true
+     discord-webhook: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
+     require-for-new-ips: true
+   ```
+
+3. **How it works:**
+   - Player logs in from a new IP → Plugin sends  6-digit code to Discord
+   - Player receives code in Discord
+   - Player uses `/verify <code>` in-game
+   - Code expires in 2 minutes
+   - After verification, login completes successfully
+
+4. **Modes:**
+   - `require-for-new-ips: true` - Only asks 2FA on new IPs (recommended)
+   - `require-for-all: true` - Always requires 2FA (maximum security)
+
+### Login History
+The plugin automatically tracks all login attempts. Players can view their history with:
+- `/loginhistory` - View your own login history
+- `/loginhistory <player>` - Admins can view any player's history
+
+History shows:
+- ✓/✗ Success or failure status
+- Date and time
+- IP address
+- Authentication method
+
 ## 🛠️ Building from Source
 
 ```bash
@@ -202,8 +255,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 💖 Credits
 
 **Developer**: TomLe (Tomas2193)  
-**Version**: 1.3.0  
-**Release Date**: December 4, 2025
+**Version**: 1.4.0  
+**Release Date**: December 5, 2025
 
 ---
 

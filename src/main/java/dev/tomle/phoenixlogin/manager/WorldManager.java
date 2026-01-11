@@ -25,11 +25,8 @@ public class WorldManager {
      */
     public void initialize() {
         if (!plugin.getConfigManager().isVoidWorldEnabled()) {
-            plugin.getLogger().info("VoidAuthWorld disabled in config.");
             return;
         }
-
-        plugin.getLogger().info("Creating/loading VoidAuthWorld...");
 
         try {
             // Verificar si el mundo ya existe
@@ -56,8 +53,6 @@ public class WorldManager {
 
             // Configurar la ubicación de spawn en el void
             setupVoidSpawn();
-
-            plugin.getLogger().info("VoidAuthWorld loaded successfully: " + voidWorld.getName());
 
         } catch (Exception e) {
             plugin.getLogger().severe("Error creating VoidAuthWorld: " + e.getMessage());
@@ -104,8 +99,6 @@ public class WorldManager {
 
         voidSpawnLocation = new Location(voidWorld, x, y, z, yaw, pitch);
         voidWorld.setSpawnLocation(voidSpawnLocation);
-
-        plugin.getLogger().info("Void spawn set at: " + x + ", " + y + ", " + z);
     }
 
     /**
@@ -124,8 +117,6 @@ public class WorldManager {
         player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(false);
         player.setFlying(false);
-
-        plugin.getLogger().info(player.getName() + " teleported to VoidAuthWorld.");
     }
 
     /**
@@ -161,7 +152,6 @@ public class WorldManager {
      */
     public void shutdown() {
         if (voidWorld != null) {
-            plugin.getLogger().info("Unloading VoidAuthWorld...");
 
             // Teletransportar todos los jugadores del void al spawn principal
             for (Player player : voidWorld.getPlayers()) {
@@ -173,8 +163,7 @@ public class WorldManager {
                 }
             }
 
-            // No descargamos el mundo para evitar problemas, solo registramos
-            plugin.getLogger().info("VoidAuthWorld prepared for shutdown.");
+            // No descargamos el mundo para evitar problemas
         }
     }
 

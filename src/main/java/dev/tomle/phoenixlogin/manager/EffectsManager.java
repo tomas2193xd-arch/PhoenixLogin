@@ -171,6 +171,30 @@ public class EffectsManager {
         showTitle(player, titleText, subtitleText);
     }
 
+    /**
+     * Muestra título de CAPTCHA con instrucciones claras en pantalla
+     */
+    public void showCaptchaTitle(Player player) {
+        if (!plugin.getConfigManager().isTitlesEnabled()) {
+            return;
+        }
+
+        String titleText = "§6§l🔒 VERIFICACIÓN";
+        String subtitleText = "§e§lMira el MAPA §7y usa §f/captcha <código>";
+
+        // Mostrar con más duración para que lean las instrucciones
+        Component titleComponent = Component.text(plugin.getMessageManager().colorize(titleText));
+        Component subtitleComponent = Component.text(plugin.getMessageManager().colorize(subtitleText));
+
+        Title.Times times = Title.Times.times(
+                Duration.ofMillis(10 * 50),
+                Duration.ofMillis(200 * 50), // 10 segundos de stay
+                Duration.ofMillis(20 * 50));
+
+        Title displayTitle = Title.title(titleComponent, subtitleComponent, times);
+        plugin.adventure().player(player).showTitle(displayTitle);
+    }
+
     private void showTitle(Player player, String title, String subtitle) {
         Component titleComponent = Component.text(plugin.getMessageManager().colorize(title));
         Component subtitleComponent = Component.text(plugin.getMessageManager().colorize(subtitle));
@@ -219,7 +243,39 @@ public class EffectsManager {
     // === PARTICLES ===
 
     public void playLoginParticles(Player player) {
-        spawnParticles(player, plugin.getConfigManager().getParticleOnLogin(), 20);
+        // Reducido de 20 a 50 para un efecto más suave (TOTEM es rápido) o 5 para
+        // FIREWORKS
+        // Si el usuario quiere "menos cohetes", podemos asumir que FIREWORKS_SPARK es
+        // mejor en menor cantidad
+        // O simplemente spawnear un solo Firework real.
+        // Por ahora, reduciremos la cantidad de partículas del config.
+        spawnParticles(player, plugin.getConfigManager().getParticleOnLogin(), 5); // Reducido drásticamente de 20 (o
+                                                                                   // 100 si era FIREWORKS)
+
+        // Opcional: Lanzar un solo fuego artificial pequeño
+        spawnElegantFirework(player);
+    }
+
+    private void spawnElegantFirework(Player player) {
+        Location loc = player.getLocation();
+        org.bukkit.entity.Firework fw = (org.bukkit.entity.Firework) loc.getWorld().spawnEntity(loc,
+                org.bukkit.entity.EntityType.FIREWORK);
+        org.bukkit.inventory.meta.FireworkMeta fwm = fw.getFireworkMeta();
+
+        // Un solo efecto elegante: Bola pequeña, Aqua y Blanco
+        org.bukkit.FireworkEffect effect = org.bukkit.FireworkEffect.builder()
+                .with(org.bukkit.FireworkEffect.Type.BALL)
+                .withColor(org.bukkit.Color.AQUA)
+                .withFade(org.bukkit.Color.WHITE)
+                .flicker(true)
+                .build();
+
+        fwm.addEffect(effect);
+        fwm.setPower(0); // Altura mínima para que explote cerca pero no dañe (power 0 o 1)
+        fw.setFireworkMeta(fwm);
+
+        // Detonar casi instantáneamente (1 tick después)
+        plugin.getServer().getScheduler().runTaskLater(plugin, fw::detonate, 2L);
     }
 
     public void playErrorParticles(Player player) {

@@ -40,6 +40,13 @@ public class LoginCommand implements CommandExecutor {
             return true;
         }
 
+        // 🛡 BLOQUEO: Si tiene captcha pendiente, DEBE completarlo primero
+        if (plugin.getCaptchaManager().hasPendingCaptcha(player)) {
+            msg.sendMessage(player, "captcha.required");
+            plugin.getEffectsManager().playErrorSound(player);
+            return true;
+        }
+
         if (args.length != 1) {
             msg.sendMessage(player, "auth.login-usage");
             return true;
@@ -77,28 +84,32 @@ public class LoginCommand implements CommandExecutor {
         String ip = player.getAddress().getAddress().getHostAddress();
         plugin.getDatabaseManager().updateLoginAsync(player.getName(), ip);
 
+        // Registrar en historial
+        plugin.getLoginHistoryManager().logLoginAttempt(player.getName(), ip, true, "password");
+
         plugin.getAuthSecurityManager().recordSuccessfulAttempt(player);
 
         // Limpiar inventario de captcha si existe
-        player.getInventory().clear();
+        // Limpiar inventario de captcha si existe (YA NO NECESARIO, LO HACE EL JOIN)
+        // player.getInventory().clear();
 
         player.setWalkSpeed(0.2f);
         player.setFlySpeed(0.1f);
 
         // RESTAURAR ubicación del jugador (desde VoidAuthWorld al mundo real)
-        plugin.getLogger().info(">>> BEFORE restoreLocation for " + player.getName() +
-                " - Current location: " + player.getLocation().getWorld().getName() +
-                " (" + player.getLocation().getBlockX() + ", " +
-                player.getLocation().getBlockY() + ", " +
-                player.getLocation().getBlockZ() + ")");
+        // plugin.getLogger().info(">>> BEFORE restoreLocation for " + player.getName()
+        // + " ... " + player.getLocation().getBlockZ() + ")");
 
         plugin.getLocationManager().restoreLocation(player);
 
-        plugin.getLogger().info(">>> AFTER restoreLocation for " + player.getName() +
-                " - New location: " + player.getLocation().getWorld().getName() +
-                " (" + player.getLocation().getBlockX() + ", " +
-                player.getLocation().getBlockY() + ", " +
-                player.getLocation().getBlockZ() + ")");
+        // 🛡 LIMPIEZA: Borrar items de Auth/Captcha ANTES de restaurar
+        plugin.getCaptchaManager().clearCaptchaItems(player);
+
+        // ✅ Restaurar inventario (items reales) una vez en el mundo correcto
+        plugin.getInventoryManager().restoreInventory(player);
+
+        // plugin.getLogger().info(">>> AFTER restoreLocation for " + player.getName() +
+        // " ... " + player.getLocation().getBlockZ() + ")");
 
         String joinMsg = msg.getMessage("join.message",
                 MessageManager.createPlaceholders("player", player.getName()));

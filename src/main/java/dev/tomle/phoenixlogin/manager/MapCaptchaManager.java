@@ -116,17 +116,14 @@ public class MapCaptchaManager {
         player.getInventory().setItem(0, mapItem);
         player.updateInventory();
 
-        // Display in chat
+        // 🎯 MOSTRAR TÍTULO EN PANTALLA (más visible que chat)
+        plugin.getEffectsManager().showCaptchaTitle(player);
+
+        // Mensaje de chat minimalista (el título ya explica todo)
         player.sendMessage("");
         player.sendMessage("§8§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-        player.sendMessage("§6§lANTI-BOT VERIFICATION");
-        player.sendMessage("");
-        player.sendMessage("  §7Look at the §fMAP §7in your hand");
-        player.sendMessage("  §7and enter the code using:");
-        player.sendMessage("");
-        player.sendMessage("  §f/captcha §a<code>");
-        player.sendMessage("");
-        player.sendMessage("  §c⏱ §760 seconds remaining");
+        player.sendMessage("§6§l⚠ ANTI-BOT §8- §7Mira el §fMAPA §7en tu mano");
+        player.sendMessage("§7Usa: §f/captcha <código> §8| §c⏱ 60s");
         player.sendMessage("§8§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
         player.sendMessage("");
     }

@@ -95,6 +95,6 @@ public class PhoenixLoginAPI {
     }
 
     public String getAPIVersion() {
-        return "1.2.0";
+        return "1.4.0";
     }
 }

@@ -35,8 +35,6 @@ public class MessageManager {
 
         this.messages = YamlConfiguration.loadConfiguration(messagesFile);
         this.prefix = colorize(messages.getString("prefix", "&6&lPhoenixLogin &8»&r"));
-
-        plugin.getLogger().info("Loaded messages for language: " + language);
     }
 
     public void reload() {

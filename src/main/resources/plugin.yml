@@ -19,6 +19,7 @@ commands:
   captcha:
     description: Verify captcha code
     usage: /<command> <code>
+    permission: phoenixlogin.captcha
 
   changepassword:
     description: Change your password
@@ -40,6 +41,11 @@ commands:
     usage: /<command>
     permission: phoenixlogin.setspawn
 
+  loginhistory:
+    description: View login history
+    aliases: [lhistory, history]
+    usage: /<command> [player]
+
 permissions:
   phoenixlogin.admin:
     description: Access to all admin commands
@@ -52,6 +58,10 @@ permissions:
   phoenixlogin.bypass:
     description: Bypass login requirement
     default: false
+
+  phoenixlogin.captcha:
+    description: Allow use of captcha command
+    default: true
 
   phoenixlogin.premium:
     description: Auto-login for premium accounts

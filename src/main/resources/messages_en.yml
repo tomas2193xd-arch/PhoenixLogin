@@ -59,6 +59,9 @@ captcha:
   next-step-login: "&eNow please login: &f/login <password>"
   next-step-register: "&eNow please register: &f/register <password> <confirm>"
 
+  # Required message (new)
+  required: "&cYou must solve the Captcha first! Look at your map."
+
 # ======================================================
 # BLOCKED ACTIONS (when not authenticated)
 # ======================================================

@@ -5,6 +5,7 @@ import dev.tomle.phoenixlogin.listener.*;
 import dev.tomle.phoenixlogin.command.*;
 import dev.tomle.phoenixlogin.api.PhoenixLoginAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PhoenixLogin extends JavaPlugin {
@@ -19,6 +20,8 @@ public class PhoenixLogin extends JavaPlugin {
     private WorldManager worldManager;
     private LocationManager locationManager;
     private MusicManager musicManager;
+    private LoginHistoryManager loginHistoryManager;
+    private InventoryManager inventoryManager;
 
     private BukkitAudiences adventure;
 
@@ -28,6 +31,9 @@ public class PhoenixLogin extends JavaPlugin {
 
         // Mostrar banner épico
         dev.tomle.phoenixlogin.util.ConsoleLogger.showBanner(getDescription().getVersion());
+
+        // 🔒 SEGURIDAD: Filtrar contraseñas de los logs de consola
+        dev.tomle.phoenixlogin.listener.PasswordLogFilter.register();
 
         this.adventure = BukkitAudiences.create(this);
 
@@ -43,10 +49,13 @@ public class PhoenixLogin extends JavaPlugin {
 
         // Initialize API for external plugins
         PhoenixLoginAPI.initialize(this);
-        dev.tomle.phoenixlogin.util.ConsoleLogger.success("API initialized successfully");
 
         registerCommands();
         registerListeners();
+
+        // Initialize bStats (silent)
+        int pluginId = 23456;
+        new Metrics(this, pluginId);
 
         // Mostrar estadísticas
         int playerCount = databaseManager.getRegisteredPlayersCount();
@@ -79,12 +88,9 @@ public class PhoenixLogin extends JavaPlugin {
             adventure.close();
             adventure = null;
         }
-
-        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Plugin disabled successfully");
     }
 
     private void initializeManagers() {
-        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[95m⚙ Initializing managers...[0m");
 
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
@@ -96,15 +102,19 @@ public class PhoenixLogin extends JavaPlugin {
         this.locationManager = new LocationManager(this);
         this.worldManager = new WorldManager(this);
         this.musicManager = new MusicManager(this);
+        this.loginHistoryManager = new LoginHistoryManager(this);
+        this.inventoryManager = new InventoryManager(this);
 
         databaseManager.initialize();
         worldManager.initialize();
+        loginHistoryManager.initialize();
+    }
 
-        dev.tomle.phoenixlogin.util.ConsoleLogger.showFeatures();
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 
     private void registerCommands() {
-        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[94m⚡ Registering commands...[0m");
 
         getCommand("login").setExecutor(new LoginCommand(this));
         getCommand("register").setExecutor(new RegisterCommand(this));
@@ -112,19 +122,17 @@ public class PhoenixLogin extends JavaPlugin {
         getCommand("changepassword").setExecutor(new ChangePasswordCommand(this));
         getCommand("unregister").setExecutor(new UnregisterCommand(this));
         getCommand("phoenixlogin").setExecutor(new AdminCommand(this));
+        getCommand("phoenixlogin").setTabCompleter(new AdminCommandTabCompleter());
         getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
-
-        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Commands registered (7 total)");
+        getCommand("loginhistory").setExecutor(new LoginHistoryCommand(this));
     }
 
     private void registerListeners() {
-        dev.tomle.phoenixlogin.util.ConsoleLogger.info("[94m⚡ Registering event listeners...[0m");
 
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new CaptchaListener(this), this);
-
-        dev.tomle.phoenixlogin.util.ConsoleLogger.success("Event listeners registered (3 total)");
+        getServer().getPluginManager().registerEvents(new ChatBlockListener(this), this);
     }
 
     public BukkitAudiences adventure() {
@@ -172,5 +180,9 @@ public class PhoenixLogin extends JavaPlugin {
 
     public MusicManager getMusicManager() {
         return musicManager;
+    }
+
+    public LoginHistoryManager getLoginHistoryManager() {
+        return loginHistoryManager;
     }
 }

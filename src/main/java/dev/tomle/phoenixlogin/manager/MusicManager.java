@@ -51,12 +51,9 @@ public class MusicManager {
             repeatModeClass = Class.forName("com.xxmicloxx.NoteBlockAPI.model.RepeatMode");
 
             noteBlockAPIAvailable = true;
-            plugin.getLogger().info("NoteBlockAPI detected! NBS music support enabled.");
+            dev.tomle.phoenixlogin.util.ConsoleLogger.success("NoteBlockAPI detected - NBS music support enabled");
         } catch (ClassNotFoundException e) {
             noteBlockAPIAvailable = false;
-            plugin.getLogger().info("NoteBlockAPI not found. Using vanilla sounds only.");
-            plugin.getLogger().info(
-                    "To enable NBS music, install NoteBlockAPI: https://www.spigotmc.org/resources/noteblockapi.19287/");
         }
     }
 
@@ -74,6 +71,9 @@ public class MusicManager {
         // Verificar si debe usar NBS o vanilla
         if (plugin.getConfigManager().useNBSMusic() && noteBlockAPIAvailable) {
             startNBSMusic(player);
+        } else if (noteBlockAPIAvailable && !plugin.getConfigManager().useNBSMusic()) {
+            // NBS disponible pero no habilitado en config - usar vanilla
+            startVanillaMusic(player);
         } else {
             startVanillaMusic(player);
         }
@@ -87,9 +87,6 @@ public class MusicManager {
         File nbsFile = new File(plugin.getDataFolder(), "music/" + nbsFileName);
 
         if (!nbsFile.exists()) {
-            plugin.getLogger().warning("NBS file not found: " + nbsFile.getPath());
-            plugin.getLogger().warning("Create the music folder: plugins/PhoenixLogin/music/");
-            plugin.getLogger().warning("Falling back to vanilla music...");
             startVanillaMusic(player);
             return;
         }
@@ -100,7 +97,6 @@ public class MusicManager {
             Object song = parseMethod.invoke(null, nbsFile);
 
             if (song == null) {
-                plugin.getLogger().warning("Failed to parse NBS file: " + nbsFile.getName());
                 startVanillaMusic(player);
                 return;
             }
@@ -143,10 +139,7 @@ public class MusicManager {
             Method getTitleMethod = songClass.getMethod("getTitle");
             String title = (String) getTitleMethod.invoke(song);
 
-            plugin.getLogger().info("Started NBS music for " + player.getName() + ": " + title);
         } catch (Exception e) {
-            plugin.getLogger().severe("Error loading NBS music: " + e.getMessage());
-            e.printStackTrace();
             startVanillaMusic(player);
         }
     }
@@ -164,7 +157,6 @@ public class MusicManager {
         try {
             sound = Sound.valueOf(soundName);
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid music sound configured: " + soundName);
             return;
         }
 
@@ -189,7 +181,8 @@ public class MusicManager {
         }, loopInterval, loopInterval);
 
         activeMusicTasks.put(player.getUniqueId(), task);
-        plugin.getLogger().info("Started vanilla music for " + player.getName() + ": " + soundName);
+        // plugin.getLogger().info("Started vanilla music for " + player.getName() + ":
+        // " + soundName);
     }
 
     /**
@@ -220,12 +213,11 @@ public class MusicManager {
                 // songPlayer.destroy()
                 Method destroyMethod = radioSongPlayerClass.getMethod("destroy");
                 destroyMethod.invoke(songPlayer);
-            } catch (Exception e) {
-                plugin.getLogger().warning("Error stopping NBS music: " + e.getMessage());
+            } catch (Exception ignored) {
             }
         }
 
-        plugin.getLogger().info("Stopped music for " + player.getName());
+        // plugin.getLogger().info("Stopped music for " + player.getName());
     }
 
     /**
@@ -250,15 +242,12 @@ public class MusicManager {
 
                         Method destroyMethod = radioSongPlayerClass.getMethod("destroy");
                         destroyMethod.invoke(songPlayer);
-                    } catch (Exception e) {
-                        plugin.getLogger().warning("Error during NBS shutdown: " + e.getMessage());
+                    } catch (Exception ignored) {
                     }
                 }
             }
         }
         activeSongPlayers.clear();
-
-        plugin.getLogger().info("MusicManager shutdown complete.");
     }
 
     /**

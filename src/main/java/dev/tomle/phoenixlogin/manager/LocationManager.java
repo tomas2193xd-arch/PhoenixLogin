@@ -29,8 +29,8 @@ public class LocationManager {
     public void saveLocation(Player player) {
         Location location = player.getLocation();
         savedLocations.put(player.getUniqueId(), location);
-        plugin.getLogger().info("Saved location for " + player.getName() +
-                " at: " + formatLocation(location));
+        // plugin.getLogger().info("Saved location for " + player.getName() + " at: " +
+        // formatLocation(location));
     }
 
     /**
@@ -47,8 +47,8 @@ public class LocationManager {
         if (savedLocation != null && savedLocation.getWorld() != null) {
             if (Bukkit.getWorld(savedLocation.getWorld().getName()) != null) {
                 player.teleport(savedLocation);
-                plugin.getLogger().info("Restored location for " + player.getName() +
-                        " to: " + formatLocation(savedLocation));
+                // plugin.getLogger().info("Restored location for " + player.getName() + " to: "
+                // + formatLocation(savedLocation));
                 return;
             } else {
                 plugin.getLogger().warning("Saved world for " + player.getName() +
@@ -60,17 +60,19 @@ public class LocationManager {
         Location configSpawn = plugin.getConfigManager().getSpawnLocation();
         if (configSpawn != null && configSpawn.getWorld() != null) {
             player.teleport(configSpawn);
-            plugin.getLogger().info("Teleported " + player.getName() + " to configured spawn (/setspawn)");
+            // plugin.getLogger().info("Teleported " + player.getName() + " to configured
+            // spawn (/setspawn)");
             return;
         }
 
         // PRIORIDAD 3: Buscar bloque seguro en mundo principal
-        plugin.getLogger().info("No spawn configured, searching for safe location for " + player.getName());
+        // plugin.getLogger().info("No spawn configured, searching for safe location for
+        // " + player.getName());
         Location safeLocation = findSafeLocation();
         if (safeLocation != null) {
             player.teleport(safeLocation);
-            plugin.getLogger()
-                    .info("Teleported " + player.getName() + " to safe location: " + formatLocation(safeLocation));
+            // plugin.getLogger().info("Teleported " + player.getName() + " to safe
+            // location: " + formatLocation(safeLocation));
             return;
         }
 
