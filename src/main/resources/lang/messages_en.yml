@@ -1,0 +1,274 @@
+# ======================================================
+#  PhoenixLogin v2.0 — Message Configuration
+#  All messages are fully customizable.
+#  Use & for color codes. Placeholders: {key}
+# ======================================================
+
+prefix: "&8[&6PhoenixLogin&8] &r"
+
+# ======================================================
+#  AUTHENTICATION
+# ======================================================
+auth:
+  login-success: "&aLogged in successfully."
+  register-success: "&aRegistered successfully."
+  session-restored: "&aSession restored. Welcome back."
+
+  already-logged: "&cYou are already logged in."
+  not-registered: "&cNot registered. Use &f/register <password> <confirm>"
+  already-registered: "&cAlready registered. Use &f/login <password>"
+  wrong-password: "&cWrong password. &7Attempts left: &e{attempts}"
+  password-mismatch: "&cPasswords do not match."
+  password-too-short: "&cPassword too short. Minimum: &e{min}"
+  password-too-long: "&cPassword too long. Maximum: &e{max}"
+  password-requirements: "&cPassword does not meet requirements."
+  account-locked: "&cAccount locked. Try again in &e{duration}s&c."
+  register-failed: "&cRegistration failed. Contact an administrator."
+  too-many-accounts: "&cToo many accounts registered from your IP."
+
+  register-usage: "&7Usage: &f/register <password> <confirm>"
+  login-usage: "&7Usage: &f/login <password>"
+
+  please-login: "&ePlease log in: &f/login <password>"
+  please-register: "&ePlease register: &f/register <password> <confirm>"
+
+# ======================================================
+#  CAPTCHA
+# ======================================================
+captcha:
+  success: "&aCaptcha verified."
+  failed: "&cWrong code. Check your map."
+  usage: "&7Usage: &f/captcha <code>"
+  item-instruction: "&ePlace &f{item} &ein slot &f{slot}"
+  math-instruction: "&eSolve: &f{question} &e= ?"
+  not-required: "&cCaptcha is not required."
+  already-authenticated: "&cAlready authenticated."
+  no-pending: "&cNo pending captcha."
+  next-step-login: "&eNow log in: &f/login <password>"
+  next-step-register: "&eNow register: &f/register <password> <confirm>"
+  required: "&cSolve the captcha first. Check your map."
+  suggestion: "&eUse &b/captcha <code> &eto verify."
+  map-title: "&6&lVERIFICATION CODE"
+  map-lore-1: "&7Look at the map"
+  map-lore-2: "&7and use &f/captcha <code>"
+  map-chat-header: "&8&l================================"
+  map-chat-info: "&6&l! ANTI-BOT &8- &7Look at the &fMAP &7in your hand"
+  map-chat-usage: "&7Use: &f/captcha <code> &8| &c60s"
+
+# ======================================================
+#  BLOCKED ACTIONS
+# ======================================================
+blocked:
+  command: "&cAuthenticate first to use commands."
+  chat: "&cAuthenticate first to chat."
+
+# ======================================================
+#  COMMANDS
+# ======================================================
+commands:
+  console-only: "&cConsole only."
+  player-only: "&cPlayers only."
+  no-permission: "&cNo permission."
+
+  admin:
+    no-permission: "&cNo permission."
+    reload: "&aConfiguration reloaded."
+    player-not-found: "&cPlayer not found."
+
+    help:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Commands"
+      reload: "&e/plogin reload &8- &7Reload config"
+      info: "&e/plogin info <player> &8- &7Player info"
+      unregister: "&e/plogin unregister <player> &8- &7Remove account"
+      stats: "&e/plogin stats &8- &7Statistics"
+      footer: "&6&m-----------------------------"
+
+    user-info: |
+      &6&m-----------------------------
+      &6&lPlayer Info
+      &6&m-----------------------------
+      &7Name: &f{player}
+      &7Registered: &f{registered}
+      &7Last IP: &f{ip}
+      &7Last Login: &f{last-login}
+      &6&m-----------------------------
+
+    unregister-player: "&aAccount &e{player} &adeleted."
+    account-deleted-by-admin: "&cYour account was removed by an admin."
+
+    stats:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Statistics"
+      active-sessions: "&7Sessions: &e{sessions}"
+      authenticated: "&7Authenticated: &a{authenticated}"
+      database: "&7Database: &f{database}"
+      registered-players: "&7Registered: &f{registered}"
+      antibot-status: "&7AntiBot: {antibot-status}"
+      antibot-blocked: "&7Blocked: &c{blocked}"
+      antibot-attacks: "&7Attacks: &c{attacks}"
+      antibot-blacklisted: "&7Blacklisted: &e{blacklisted}"
+      footer: "&6&m-----------------------------"
+
+    usage-info: "&7Usage: &f/plogin info <player>"
+    usage-unregister: "&7Usage: &f/plogin unregister <player>"
+
+  changepassword:
+    usage: "&7Usage: &f/changepassword <old> <new>"
+    success: "&aPassword changed."
+    wrong-old: "&cWrong current password."
+    failed: "&cFailed to change password."
+    requirements-not-met: "&cNew password does not meet requirements."
+
+  unregister:
+    usage: "&7Usage: &f/unregister <password>"
+    success: "&cAccount deleted."
+    wrong-password: "&cWrong password."
+    failed: "&cFailed to delete account."
+    kick-message: "&eYour account has been deleted."
+
+  setspawn:
+    no-permission: "&cNo permission."
+    success: "&aLogin spawn set."
+    world: "&7World: &f{world}"
+    coordinates: "&7Position: &f{x}, {y}, {z}"
+    info: "&ePlayers will teleport here after login."
+
+# ======================================================
+#  ANTI-BOT
+# ======================================================
+antibot:
+  verification-kick: "&6&lConnection Verification\n\n&7Your connection is being verified.\n&7Please reconnect to continue.\n\n&8This check is automatic and prevents bots.\n&8Verified IPs are remembered for {days} days."
+  rate-limited: "&cToo many connections. Try again in {time}s."
+  attack-mode: "&cServer is under protection. Try again later."
+  invalid-name: "&cInvalid username."
+  blacklisted: "&cYou have been temporarily blocked."
+  attack-started: "&c[AntiBot] Attack detected. Protection active."
+  attack-ended: "&a[AntiBot] Attack ended. Normal mode restored."
+
+# ======================================================
+#  KICK MESSAGES
+# ======================================================
+kick:
+  too-many-attempts: "&cToo many failed attempts."
+  timeout: "&cAuthentication timeout."
+
+# ======================================================
+#  TITLES
+# ======================================================
+titles:
+  welcome:
+    title: "&6&lWELCOME"
+    subtitle: "&7Please authenticate"
+
+  register:
+    title: "&a&lREGISTERED"
+    subtitle: "&7Account created"
+
+  login:
+    title: "&a&lWELCOME BACK"
+    subtitle: "&7Logged in"
+
+  error:
+    title: "&c&lERROR"
+    subtitle: "&7{message}"
+
+  captcha:
+    title: "&6&lVERIFICATION"
+    subtitle: "&eLook at the MAP &7and use &f/captcha <code>"
+
+  warning-critical:
+    title: "&c&l!! {time} !!"
+    subtitle: "&e&lAUTHENTICATE NOW"
+
+  warning-medium:
+    title: "&6{time}s"
+    subtitle: "&eAuthenticate soon"
+
+# ======================================================
+#  BOSS BARS
+# ======================================================
+bossbar:
+  captcha: "&6&lVerify Captcha -- Check your map"
+  login: "&e&lLogin -- /login <password>"
+  register: "&e&lRegister -- /register <password> <confirm>"
+  please-login: "&e&lLogin -- /login <password>"
+  please-register: "&e&lRegister -- /register <password> <confirm>"
+
+# ======================================================
+#  TIMER WARNINGS
+# ======================================================
+timer:
+  critical-warning:
+    title: "&c&l!! WARNING !!"
+    message: "&eOnly &c{time}s &eremaining!"
+    command-login: "&7Use: &f/login <password>"
+    command-register: "&7Use: &f/register <password> <confirm>"
+
+  medium-warning:
+    message: "&e{time}s remaining."
+
+  actionbar:
+    login: "&8[{bar}&8] {color}{time}s &8| &7LOGIN"
+    register: "&8[{bar}&8] {color}{time}s &8| &7REGISTER"
+
+# ======================================================
+#  JOIN MESSAGE
+# ======================================================
+join:
+  message: "&e{player} joined the game"
+
+# ======================================================
+#  LOGIN HISTORY
+# ======================================================
+history:
+  header: "&6&m-----------------------------"
+  title: "&6&lLogin History"
+  title-other: "&6&lLogin History &8- &f{player}"
+  footer: "&6&m-----------------------------"
+  no-history: "&cNo login history available."
+  showing: "&7Showing last {count} login(s)"
+
+# ======================================================
+#  DATE FORMAT
+# ======================================================
+format:
+  date: "MM/dd/yyyy HH:mm:ss"
+  never: "Never"
+  not-available: "N/A"
+
+# ======================================================
+#  PREMIUM (MOJANG) AUTHENTICATION
+# ======================================================
+premium:
+  # Prompt shown when a premium-named player joins
+  prompt:
+    header: "&8&m                                          "
+    question: "&6&l⚡ &eAre you a &6&lPREMIUM &e(Mojang) player?"
+    option-premium: "  &a▸ &fType &a/premium &fto auto-login via Mojang"
+    option-cracked: "  &c▸ &fType &c/cracked &fto use password login"
+    footer: "&8&m                                          "
+
+  # Verification messages
+  verifying: "&eVerifying your Mojang account..."
+  api-error: "&cCould not reach Mojang servers. Please use &f/login &cinstead."
+  not-premium: "&cYour username is not a premium Mojang account. Use &f/login &cor &f/register&c."
+  offline-mode: "&cYour session could not be verified (offline mode)."
+  use-login: "&7Use &f/login <password> &7to authenticate instead."
+  uuid-mismatch: "&cYour session does not match this Mojang account."
+  session-unverified: "&cPremium session expired or unverified. Please login with password."
+
+  # Success messages
+  login-success: "&a&l✓ &aPremium login verified! Welcome, &f{player}&a."
+  auto-login-success: "&a&l✓ &aPremium auto-login! Welcome back, &f{player}&a."
+
+  # Toggle messages (for already-authenticated players)
+  enabled-for-account: "&aYou are now marked as &6&lPREMIUM&a. Future logins will be automatic!"
+  disabled-for-account: "&ePremium auto-login &cdisabled&e. You will need to use &f/login &enext time."
+  cannot-verify: "&cCould not verify your Mojang ownership. Are you using the correct account?"
+
+  # Cracked selection
+  cracked-selected: "&7Continuing with password authentication..."
+
+  # System disabled
+  disabled: "&cPremium authentication is not enabled on this server."

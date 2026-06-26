@@ -1,9 +1,22 @@
-# PhoenixLogin - Advanced Authentication System
-# Configuration File
+# ==============================================================================
+#                    PHOENIXLOGIN v2.0 — MAIN CONFIGURATION
+# ==============================================================================
+# Author: Tomas2193
+#
+# Messages are loaded from lang/messages_{language}.yml
+# Users can fully customize each language file.
+# ==============================================================================
 
-language: "en"
+# Language for all plugin messages
+# Supported: en (English), es (Español), pt (Português)
+# Change this and do /plogin reload to switch language instantly
+language: en
 
+# ==============================================================================
+#                              DATABASE
+# ==============================================================================
 database:
+  # SQLITE (local file) or MYSQL (remote)
   type: "SQLITE"
   mysql:
     host: "localhost"
@@ -13,6 +26,9 @@ database:
     password: "password"
     pool-size: 10
 
+# ==============================================================================
+#                              SECURITY
+# ==============================================================================
 security:
   password:
     min-length: 4
@@ -20,105 +36,208 @@ security:
     require-uppercase: false
     require-numbers: false
     require-special: false
+
   max-login-attempts: 3
-  lockout-duration: 300
+  lockout-duration: 300 # seconds
+
   sessions:
     enabled: true
-    duration: 60
+    duration: 86400 # seconds (24h)
     remember-ip: true
 
-captcha:
+  # Maximum accounts that can be registered from the same IP (0 = unlimited)
+  max-accounts-per-ip: 3
+
+# ==============================================================================
+#                          ANTI-BOT PROTECTION
+# ==============================================================================
+antibot:
   enabled: true
-  type: "MAP" # ITEM, MATH, or MAP (recommended for professional servers)
+
+  # Per-IP connection rate limiting
+  rate-limit:
+    max-connections-per-ip: 3
+    time-window: 60 # seconds
+
+  # Kick-and-rejoin verification
+  # New IPs or expired sessions require the player to reconnect
+  verification:
+    expiration-days: 14 # how long a verified IP stays valid
+
+  # Global attack detection (connection surge)
+  attack-detection:
+    enabled: true
+    max-joins-per-minute: 15
+    attack-duration: 120 # seconds in attack mode
+
+  # Restrictions applied during an active attack
+  attack-mode:
+    max-connections-per-ip: 1
+
+  # Username validation
+  name-validation:
+    enabled: true
+    min-length: 3
+    max-length: 16
+    block-random-names: true
+
+  # Auto-blacklist repeat offenders
+  blacklist:
+    enabled: true
+    threshold: 5 # violations before blacklist
+    duration: 3600 # seconds (1 hour)
+
+# ==============================================================================
+#                              CAPTCHA
+# ==============================================================================
+captcha:
+  enabled: false
+  type: "MAP" # ITEM, MAP, or MATH
+
+  map:
+    background-color: "24,24,24"
+
   item:
     required-item: "EMERALD"
     target-slot: 4
-  math:
-    difficulty: "EASY"
 
+  math:
+    difficulty: "EASY" # EASY, MEDIUM, HARD
+
+# ==============================================================================
+#                        LOGIN BEHAVIOR
+# ==============================================================================
 login:
   freeze-player: true
   block-movement: true
   block-interact: true
   block-damage: true
   block-commands: true
+
   auto-kick:
     enabled: true
-    delay: 60
-  teleport-to-spawn: false
+    delay: 60 # seconds
+
+  teleport-to-spawn: true
   spawn-location:
     world: "world"
-    x: 0
-    y: 64
-    z: 0
-    yaw: 0
-    pitch: 0
+    x: 0.5
+    y: 64.0
+    z: 0.5
+    yaw: 0.0
+    pitch: 0.0
 
+  # Extra commands allowed during authentication (besides /login, /register, etc.)
+  # Useful for plugins that require commands before login
+  allowed-commands: []
+  # Example: allowed-commands: ["helpop", "msg"]
+
+# ==============================================================================
+#                         VOID AUTH WORLD
+# ==============================================================================
 void-world:
   enabled: true
   world-name: "phoenixlogin_void"
   fallback-to-spawn: true
 
+# ==============================================================================
+#                           EFFECTS
+# ==============================================================================
 effects:
   bossbar:
     enabled: true
-    color: "RED"
-    style: "SOLID"
+    color: "RED" # BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+    style: "SOLID" # SOLID, SEGMENTED_6, SEGMENTED_10, etc.
+
   titles:
     enabled: true
     fade-in: 10
     stay: 70
     fade-out: 20
+
   sounds:
     on-login: "ENTITY_PLAYER_LEVELUP"
     on-register: "ENTITY_EXPERIENCE_ORB_PICKUP"
     on-error: "ENTITY_VILLAGER_NO"
-  particles:
-    on-login: "VILLAGER_HAPPY"
-    on-error: "VILLAGER_ANGRY"
 
+  particles:
+    # Use HAPPY_VILLAGER / ANGRY_VILLAGER for modern versions
+    # Plugin auto-detects and falls back to legacy names if needed
+    on-login: "HAPPY_VILLAGER"
+    on-error: "ANGRY_VILLAGER"
+
+# ==============================================================================
+#                           SETTINGS
+# ==============================================================================
+settings:
+  hide-players: true
+  clean-chat: true
+  clean-console: true
+
+  # Show join message after login? Set to false to disable entirely.
+  join-message-enabled: true
+
+# ==============================================================================
+#                        LOGIN MUSIC
+# ==============================================================================
 login-music:
   enabled: true
-
-  # OPTION 1: Vanilla Sounds (Default - No extra plugins needed)
-  use-nbs: false
-  sound: "MUSIC_DISC_CAT"
+  sound: "MUSIC_DISC_13"
   volume: 0.3
   pitch: 1.0
   loop-interval: 100
 
-  # OPTION 2: NBS Files (Requires NoteBlockAPI plugin)
-  # Download NoteBlockAPI: https://www.spigotmc.org/resources/noteblockapi.19287/
-  # Get .nbs files from:
-  #   - https://opennbs.org/
-  #   - https://www.minecraft-noteblock.com/
-  #   - Create your own with Note Block Studio
-  #
-  # How to use:
-  #   1. Install NoteBlockAPI plugin
-  #   2. Place your .nbs file in: plugins/PhoenixLogin/music/
-  #   3. Set filename below
-  #   4. Set use-nbs: true
-  #   5. Restart and enjoy!
+  use-nbs: true
   nbs-file: "login.nbs"
   nbs-volume: 1.0
 
-premium:
-  enabled: false
-  auto-login: false
-
-discord:
-  enabled: false
-  webhook-url: ""
-  notify-new-register: true
-  notify-suspicious-login: true
-
+# ==============================================================================
+#                          ADVANCED
+# ==============================================================================
 advanced:
-  two-factor:
+  discord:
     enabled: false
-  ip-filtering:
-    enabled: false
+    webhook-url: ""
+    notify-new-register: true
+    notify-suspicious-login: true
+
   logging:
     enabled: true
     log-file: "phoenixlogin.log"
-    log-level: "INFO"
+    log-level: "WARN" # INFO, WARN, ERROR
+    history-cleanup-days: 90 # Automatically delete login history older than X days (0 = never)
+
+  two-factor:
+    enabled: false
+
+  ip-filtering:
+    enabled: false
+
+# ==============================================================================
+#                      PREMIUM (MOJANG) AUTHENTICATION
+# ==============================================================================
+# When enabled, the plugin asks new players "Are you premium or cracked?"
+# Premium players use /premium to auto-login via Mojang UUID verification.
+# Cracked players use /cracked to proceed to the normal password flow.
+#
+# NOTE: This requires the server to be behind a BungeeCord/Velocity proxy
+# with online-mode enabled, or the server itself in online-mode.
+# On offline-mode servers without a proxy, UUID comparison will not match
+# and premium players must use /login like normal.
+# ==============================================================================
+premium:
+  # Enable the premium auto-login system
+  enabled: false
+
+  # Auto-login players who have previously marked themselves as premium
+  # On next join, their UUID is compared with Mojang to verify ownership
+  auto-login: true
+
+  # Kick cracked players who try to use a premium player's name
+  # (only when the real premium player has already registered)
+  kick-on-name-taken: false
+
+  # IMPORTANT: For premium login to work, the server must be in online-mode
+  # OR behind a BungeeCord/Velocity proxy with online-mode enabled.
+  # On pure offline-mode servers, UUID comparison will always fail
+  # and premium players must use /login with a password.

@@ -7,14 +7,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Gestiona el historial de logins de los jugadores
+ * Manages login history entries.
  */
 public class LoginHistoryManager {
 
@@ -25,16 +26,10 @@ public class LoginHistoryManager {
         this.plugin = plugin;
     }
 
-    /**
-     * Inicializa la tabla de historial
-     */
     public void initialize() {
         createHistoryTable();
     }
 
-    /**
-     * Crea la tabla de historial si no existe
-     */
     private void createHistoryTable() {
         String sql = "CREATE TABLE IF NOT EXISTS " + tablePrefix + "login_history (" +
                 "id INTEGER PRIMARY KEY "
@@ -56,9 +51,6 @@ public class LoginHistoryManager {
         }
     }
 
-    /**
-     * Registra un intento de login en el historial
-     */
     public CompletableFuture<Void> logLoginAttempt(String playerName, String ipAddress, boolean success,
             String method) {
         return CompletableFuture.runAsync(() -> {
@@ -81,9 +73,6 @@ public class LoginHistoryManager {
         });
     }
 
-    /**
-     * Obtiene el historial de logins de un jugador
-     */
     public CompletableFuture<List<LoginEntry>> getLoginHistory(String playerName, int limit) {
         return CompletableFuture.supplyAsync(() -> {
             List<LoginEntry> history = new ArrayList<>();
@@ -114,9 +103,6 @@ public class LoginHistoryManager {
         });
     }
 
-    /**
-     * Obtiene las últimas IPs usadas por un jugador
-     */
     public CompletableFuture<List<String>> getRecentIPs(String playerName, int limit) {
         return CompletableFuture.supplyAsync(() -> {
             List<String> ips = new ArrayList<>();
@@ -142,9 +128,6 @@ public class LoginHistoryManager {
         });
     }
 
-    /**
-     * Cuenta los intentos fallidos desde una IP en un período de tiempo
-     */
     public CompletableFuture<Integer> countFailedAttempts(String ipAddress, long sinceTimestamp) {
         return CompletableFuture.supplyAsync(() -> {
             String sql = "SELECT COUNT(*) FROM " + tablePrefix + "login_history " +
@@ -169,9 +152,6 @@ public class LoginHistoryManager {
         });
     }
 
-    /**
-     * Limpia entradas antiguas del historial (mantiene solo los últimos X días)
-     */
     public CompletableFuture<Void> cleanupOldEntries(int daysToKeep) {
         return CompletableFuture.runAsync(() -> {
             long cutoffTime = System.currentTimeMillis() - (daysToKeep * 24L * 60L * 60L * 1000L);
@@ -190,7 +170,7 @@ public class LoginHistoryManager {
     }
 
     /**
-     * Clase que representa una entrada del historial
+     * Represents a single login history entry.
      */
     public static class LoginEntry {
         private final String playerName;
@@ -227,9 +207,11 @@ public class LoginHistoryManager {
             return method;
         }
 
+        private static final DateTimeFormatter DATE_FORMAT =
+                DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
+
         public String getFormattedDate() {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            return sdf.format(new Date(timestamp));
+            return DATE_FORMAT.format(Instant.ofEpochMilli(timestamp));
         }
 
         public String getStatusColor() {

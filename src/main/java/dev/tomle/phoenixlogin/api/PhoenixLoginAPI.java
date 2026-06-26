@@ -8,11 +8,10 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Main API class for PhoenixLogin.
- * 
- * @author TomLe
- * @version 1.2.0
- * @since 1.2.0
+ * Public API for PhoenixLogin integration.
+ *
+ * @author Tomas2193
+ * @version 1.6.0
  */
 public class PhoenixLoginAPI {
 
@@ -25,52 +24,47 @@ public class PhoenixLoginAPI {
 
     public static void initialize(PhoenixLogin plugin) {
         if (instance != null) {
-            throw new IllegalStateException("PhoenixLoginAPI is already initialized");
+            throw new IllegalStateException("PhoenixLoginAPI already initialized");
         }
         instance = new PhoenixLoginAPI(plugin);
     }
 
     public static PhoenixLoginAPI getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("PhoenixLoginAPI is not initialized. Is PhoenixLogin loaded?");
+            throw new IllegalStateException("PhoenixLoginAPI not initialized. Is PhoenixLogin loaded?");
         }
         return instance;
     }
 
     public boolean isAuthenticated(Player player) {
-        if (player == null) {
+        if (player == null)
             throw new NullPointerException("Player cannot be null");
-        }
         return plugin.getSessionManager().isAuthenticated(player);
     }
 
     public CompletableFuture<Boolean> isRegisteredAsync(String playerName) {
-        if (playerName == null) {
+        if (playerName == null)
             throw new NullPointerException("Player name cannot be null");
-        }
         return plugin.getDatabaseManager().loadPlayerDataAsync(playerName)
                 .thenApply(data -> data != null && data.isRegistered());
     }
 
     public CompletableFuture<Optional<PlayerData>> getPlayerDataAsync(String playerName) {
-        if (playerName == null) {
+        if (playerName == null)
             throw new NullPointerException("Player name cannot be null");
-        }
         return plugin.getDatabaseManager().loadPlayerDataAsync(playerName)
                 .thenApply(Optional::ofNullable);
     }
 
     public void forceAuthenticate(Player player) {
-        if (player == null) {
+        if (player == null)
             throw new NullPointerException("Player cannot be null");
-        }
         plugin.getSessionManager().setAuthenticated(player, true);
     }
 
     public void forceLogout(Player player) {
-        if (player == null) {
+        if (player == null)
             throw new NullPointerException("Player cannot be null");
-        }
         plugin.getSessionManager().setAuthenticated(player, false);
     }
 
@@ -95,6 +89,6 @@ public class PhoenixLoginAPI {
     }
 
     public String getAPIVersion() {
-        return "1.4.0";
+        return plugin.getDescription().getVersion();
     }
 }

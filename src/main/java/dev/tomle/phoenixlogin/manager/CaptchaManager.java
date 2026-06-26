@@ -17,7 +17,6 @@ public class CaptchaManager {
     private final Map<UUID, CaptchaData> activeCaptchas;
     private final MapCaptchaManager mapCaptchaManager;
 
-    // Lista de items posibles para captcha
     private static final Material[] CAPTCHA_ITEMS = {
             Material.EMERALD,
             Material.DIAMOND,
@@ -42,7 +41,6 @@ public class CaptchaManager {
 
     public void generateCaptcha(Player player) {
         String type = plugin.getConfigManager().getCaptchaType();
-
         CaptchaData captcha = null;
 
         switch (type) {
@@ -54,7 +52,7 @@ public class CaptchaManager {
                 break;
             case "MAP":
                 generateMapCaptcha(player);
-                return; // MAP captcha se maneja diferente
+                return;
             default:
                 captcha = generateItemCaptcha();
         }
@@ -64,26 +62,19 @@ public class CaptchaManager {
     }
 
     private void generateMapCaptcha(Player player) {
-        String code = mapCaptchaManager.createCaptcha(player);
-        // El MapCaptchaManager maneja todo internamente
+        mapCaptchaManager.createCaptcha(player);
         plugin.getEffectsManager().showCaptchaBossBar(player);
     }
 
     private CaptchaData generateItemCaptcha() {
-        // Elegir item aleatorio
         Material requiredItem = CAPTCHA_ITEMS[random.nextInt(CAPTCHA_ITEMS.length)];
-
-        // Elegir slot aleatorio (0-8 para hotbar)
         int targetSlot = random.nextInt(9);
-
         return new CaptchaData(CaptchaType.ITEM, requiredItem, targetSlot);
     }
 
     private CaptchaData generateMathCaptcha() {
         String difficulty = plugin.getConfigManager().getCaptchaMathDifficulty();
-
-        int num1, num2, answer;
-        String question;
+        int num1, num2;
 
         switch (difficulty) {
             case "HARD":
@@ -99,7 +90,9 @@ public class CaptchaManager {
                 num2 = random.nextInt(10) + 1;
         }
 
-        int operation = random.nextInt(2); // 0 = suma, 1 = resta
+        int operation = random.nextInt(2); // 0 = add, 1 = subtract
+        String question;
+        int answer;
 
         if (operation == 0) {
             question = num1 + " + " + num2;
@@ -123,11 +116,10 @@ public class CaptchaManager {
         if (captcha.getType() == CaptchaType.ITEM) {
             Map<String, String> placeholders = MessageManager.createPlaceholders(
                     "item", captcha.getRequiredItem().toString().toLowerCase().replace("_", " "),
-                    "slot", String.valueOf(captcha.getTargetSlot() + 1)); // +1 porque slots son 0-8 pero mostramos 1-9
+                    "slot", String.valueOf(captcha.getTargetSlot() + 1));
 
             msg.sendMessage(player, "captcha.item-instruction", placeholders);
 
-            // Limpiar inventario y dar el item
             player.getInventory().clear();
             player.getInventory().addItem(new ItemStack(captcha.getRequiredItem(), 1));
             player.updateInventory();
@@ -143,21 +135,18 @@ public class CaptchaManager {
     }
 
     public boolean verifyCaptcha(Player player, Object answer) {
-        // Primero verificar si es MAP captcha
+        // Check MAP captcha first
         if (mapCaptchaManager.hasCaptcha(player)) {
             return mapCaptchaManager.verifyCaptcha(player, answer.toString());
         }
 
         CaptchaData captcha = activeCaptchas.get(player.getUniqueId());
-
-        if (captcha == null) {
+        if (captcha == null)
             return false;
-        }
 
         boolean success = false;
 
         if (captcha.getType() == CaptchaType.ITEM) {
-            // Verificar si el item está en el slot correcto
             ItemStack item = player.getInventory().getItem(captcha.getTargetSlot());
             if (item != null && item.getType() == captcha.getRequiredItem()) {
                 success = true;
@@ -191,16 +180,13 @@ public class CaptchaManager {
     }
 
     /**
-     * Limpia completamente los items de captcha (Mapa, Items de Drag&Drop, etc.)
-     * Debe llamarse ANTES de restaurar el inventario original.
+     * Clears all captcha items from a player's inventory.
+     * Call this BEFORE restoring the original inventory.
      */
     public void clearCaptchaItems(Player player) {
-        // Enforce cleanup
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.getInventory().setItemInOffHand(null);
-
-        // Remove active sessions
         removeCaptcha(player);
     }
 
@@ -221,14 +207,14 @@ public class CaptchaManager {
         private String question;
         private int answer;
 
-        // Constructor para ITEM captcha
+        // ITEM constructor
         public CaptchaData(CaptchaType type, Material requiredItem, int targetSlot) {
             this.type = type;
             this.requiredItem = requiredItem;
             this.targetSlot = targetSlot;
         }
 
-        // Constructor para MATH captcha
+        // MATH constructor
         public CaptchaData(CaptchaType type, String question, int answer) {
             this.type = type;
             this.question = question;

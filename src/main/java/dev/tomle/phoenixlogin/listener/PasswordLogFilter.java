@@ -8,32 +8,33 @@ import org.apache.logging.log4j.core.filter.AbstractFilter;
 import java.util.regex.Pattern;
 
 /**
- * Filtro que oculta las contraseñas de los comandos de autenticación en la
- * consola.
- * Previene que /login, /register, /changepassword, /unregister muestren las
- * contraseñas en logs.
+ * Filters password-containing commands from console logs.
+ * Prevents /login, /register, /changepassword, /unregister from
+ * leaking passwords in server logs.
  */
 public class PasswordLogFilter extends AbstractFilter {
 
-    // Patrones para detectar comandos con contraseña
     private static final Pattern LOGIN_PATTERN = Pattern.compile(
-            ".*issued server command: /(login|l|loguear)\\s+.+", Pattern.CASE_INSENSITIVE);
+            ".*issued server command: /(login|l)\\s+.+", Pattern.CASE_INSENSITIVE);
     private static final Pattern REGISTER_PATTERN = Pattern.compile(
-            ".*issued server command: /(register|reg|registrar)\\s+.+", Pattern.CASE_INSENSITIVE);
+            ".*issued server command: /(register|reg)\\s+.+", Pattern.CASE_INSENSITIVE);
     private static final Pattern CHANGEPASS_PATTERN = Pattern.compile(
             ".*issued server command: /changepassword\\s+.+", Pattern.CASE_INSENSITIVE);
     private static final Pattern UNREGISTER_PATTERN = Pattern.compile(
             ".*issued server command: /unregister\\s+.+", Pattern.CASE_INSENSITIVE);
+    // Also filter captcha codes from logs
+    private static final Pattern CAPTCHA_PATTERN = Pattern.compile(
+            ".*issued server command: /captcha\\s+.+", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Registra el filtro en el logger del servidor
+     * Registers this filter on the root logger.
      */
     public static void register() {
         try {
             Logger rootLogger = (Logger) LogManager.getRootLogger();
             rootLogger.addFilter(new PasswordLogFilter());
         } catch (Exception e) {
-            // Si falla, no pasa nada crítico - solo no se filtrará
+            // Non-critical — passwords won't be filtered
         }
     }
 
@@ -48,7 +49,6 @@ public class PasswordLogFilter extends AbstractFilter {
             return Result.NEUTRAL;
         }
 
-        // Si el mensaje contiene un comando de autenticación con contraseña, denegarlo
         if (containsPasswordCommand(message)) {
             return Result.DENY;
         }
@@ -60,6 +60,7 @@ public class PasswordLogFilter extends AbstractFilter {
         return LOGIN_PATTERN.matcher(message).matches() ||
                 REGISTER_PATTERN.matcher(message).matches() ||
                 CHANGEPASS_PATTERN.matcher(message).matches() ||
-                UNREGISTER_PATTERN.matcher(message).matches();
+                UNREGISTER_PATTERN.matcher(message).matches() ||
+                CAPTCHA_PATTERN.matcher(message).matches();
     }
 }

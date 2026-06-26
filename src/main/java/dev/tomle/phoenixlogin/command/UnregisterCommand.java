@@ -18,21 +18,18 @@ public class UnregisterCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
         Player player = (Player) sender;
         MessageManager msg = plugin.getMessageManager();
 
-        // Verificar si está autenticado
         if (!plugin.getSessionManager().isAuthenticated(player)) {
             msg.sendMessage(player, "auth.please-login");
             return true;
         }
 
-        // Verificar argumentos
         if (args.length != 1) {
             msg.sendMessage(player, "commands.unregister.usage");
             return true;
@@ -40,21 +37,17 @@ public class UnregisterCommand implements CommandExecutor {
 
         String password = args[0];
 
-        // Verificar contraseña
         plugin.getDatabaseManager().verifyPasswordAsync(player.getName(), password)
                 .thenAccept(correct -> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         if (correct) {
-                            // Eliminar cuenta
                             plugin.getDatabaseManager().unregisterPlayerAsync(player.getName())
                                     .thenAccept(success -> {
                                         plugin.getServer().getScheduler().runTask(plugin, () -> {
                                             if (success) {
                                                 msg.sendMessage(player, "commands.unregister.success");
-                                                plugin.getLogger()
-                                                        .warning(player.getName() + " has unregistered their account!");
+                                                plugin.getLogger().warning(player.getName() + " unregistered.");
 
-                                                // Kickear al jugador después de 3 segundos
                                                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                                                     if (player.isOnline()) {
                                                         player.kickPlayer(

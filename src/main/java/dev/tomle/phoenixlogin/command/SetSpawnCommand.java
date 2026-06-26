@@ -21,8 +21,7 @@ public class SetSpawnCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
@@ -36,7 +35,6 @@ public class SetSpawnCommand implements CommandExecutor {
 
         Location loc = player.getLocation();
 
-        // Guardar spawn en config
         plugin.getConfig().set("login.teleport-to-spawn", true);
         plugin.getConfig().set("login.spawn-location.world", loc.getWorld().getName());
         plugin.getConfig().set("login.spawn-location.x", loc.getX());
@@ -46,7 +44,6 @@ public class SetSpawnCommand implements CommandExecutor {
         plugin.getConfig().set("login.spawn-location.pitch", loc.getPitch());
         plugin.saveConfig();
 
-        // Recargar config manager
         plugin.getConfigManager().reload();
 
         Map<String, String> placeholders = MessageManager.createPlaceholders(
@@ -60,7 +57,7 @@ public class SetSpawnCommand implements CommandExecutor {
         player.sendMessage(msg.getMessage("commands.setspawn.coordinates", placeholders));
         msg.sendMessage(player, "commands.setspawn.info");
 
-        plugin.getLogger().info(player.getName() + " set post-login spawn at: " +
+        plugin.getLogger().info(player.getName() + " set login spawn: " +
                 loc.getWorld().getName() + " " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
 
         return true;

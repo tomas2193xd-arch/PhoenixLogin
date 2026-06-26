@@ -32,7 +32,7 @@ public class DatabaseManager {
             }
 
             createTables();
-            plugin.getLogger().info("Database initialized successfully!");
+            plugin.getLogger().info("Database initialized.");
 
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to initialize database!");
@@ -62,8 +62,7 @@ public class DatabaseManager {
         hikariConfig.addDataSourceProperty("maintainTimeStats", "false");
 
         this.dataSource = new HikariDataSource(hikariConfig);
-
-        plugin.getLogger().info("MySQL connection pool established!");
+        plugin.getLogger().info("MySQL connection pool established.");
     }
 
     private void setupSQLite() {
@@ -74,8 +73,7 @@ public class DatabaseManager {
         hikariConfig.setMaximumPoolSize(1);
 
         this.dataSource = new HikariDataSource(hikariConfig);
-
-        plugin.getLogger().info("SQLite database file created at: " + dbFile.getAbsolutePath());
+        plugin.getLogger().info("SQLite database: " + dbFile.getAbsolutePath());
     }
 
     private void createTables() throws SQLException {
@@ -114,7 +112,7 @@ public class DatabaseManager {
 
     public Connection getConnection() throws SQLException {
         if (dataSource == null) {
-            throw new SQLException("DataSource is not initialized!");
+            throw new SQLException("DataSource not initialized!");
         }
         return dataSource.getConnection();
     }
@@ -122,7 +120,7 @@ public class DatabaseManager {
     public void shutdown() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            plugin.getLogger().info("Database connection closed!");
+            plugin.getLogger().info("Database connection closed.");
         }
     }
 
@@ -149,7 +147,7 @@ public class DatabaseManager {
                 return new PlayerData(playerName);
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error loading player data for: " + playerName);
+                plugin.getLogger().severe("Error loading data: " + playerName);
                 e.printStackTrace();
                 return new PlayerData(playerName);
             }
@@ -171,12 +169,11 @@ public class DatabaseManager {
                 ps.setString(3, ip);
                 ps.setLong(4, now);
                 ps.setLong(5, now);
-
                 ps.executeUpdate();
                 return true;
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error registering player: " + playerName);
+                plugin.getLogger().severe("Error registering: " + playerName);
                 e.printStackTrace();
                 return false;
             }
@@ -201,7 +198,7 @@ public class DatabaseManager {
                 return false;
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error verifying password for: " + playerName);
+                plugin.getLogger().severe("Error verifying password: " + playerName);
                 e.printStackTrace();
                 return false;
             }
@@ -220,11 +217,10 @@ public class DatabaseManager {
                 ps.setString(1, ip);
                 ps.setLong(2, now);
                 ps.setString(3, playerName);
-
                 ps.executeUpdate();
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error updating login for: " + playerName);
+                plugin.getLogger().severe("Error updating login: " + playerName);
                 e.printStackTrace();
             }
         });
@@ -240,12 +236,11 @@ public class DatabaseManager {
 
                 ps.setString(1, newHash);
                 ps.setString(2, playerName);
-
                 ps.executeUpdate();
                 return true;
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error changing password for: " + playerName);
+                plugin.getLogger().severe("Error changing password: " + playerName);
                 e.printStackTrace();
                 return false;
             }
@@ -263,7 +258,7 @@ public class DatabaseManager {
                 return true;
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error unregistering player: " + playerName);
+                plugin.getLogger().severe("Error unregistering: " + playerName);
                 e.printStackTrace();
                 return false;
             }
@@ -281,18 +276,17 @@ public class DatabaseManager {
                 ps.setString(2, ip);
                 ps.setBoolean(3, success);
                 ps.setLong(4, System.currentTimeMillis());
-
                 ps.executeUpdate();
 
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error logging attempt for: " + playerName);
+                plugin.getLogger().severe("Error logging attempt: " + playerName);
                 e.printStackTrace();
             }
         });
     }
 
     /**
-     * Obtiene el número total de jugadores registrados
+     * Returns the total registered player count (sync — use only in onEnable).
      */
     public int getRegisteredPlayersCount() {
         try (Connection conn = getConnection();
@@ -304,8 +298,38 @@ public class DatabaseManager {
             }
 
         } catch (SQLException e) {
-            plugin.getLogger().warning("Could not fetch registered players count");
+            plugin.getLogger().warning("Could not fetch registered player count.");
         }
         return 0;
+    }
+
+    /**
+     * Async version for use in commands (never blocks main thread).
+     */
+    public CompletableFuture<Integer> getRegisteredPlayersCountAsync() {
+        return CompletableFuture.supplyAsync(() -> getRegisteredPlayersCount());
+    }
+
+    /**
+     * Count how many accounts are registered from a given IP.
+     */
+    public CompletableFuture<Integer> countAccountsByIPAsync(String ip) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = getConnection();
+                    PreparedStatement ps = conn.prepareStatement(
+                            "SELECT COUNT(*) FROM " + tablePrefix + "players WHERE last_ip = ?")) {
+
+                ps.setString(1, ip);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error counting accounts by IP: " + ip);
+                e.printStackTrace();
+            }
+            return 0;
+        });
     }
 }

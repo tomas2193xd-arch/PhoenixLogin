@@ -9,9 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Comando para ver el historial de logins
+ * Command to view login history.
  */
 public class LoginHistoryCommand implements CommandExecutor {
 
@@ -24,20 +25,18 @@ public class LoginHistoryCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cEste comando solo puede ser usado por jugadores.");
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
         Player player = (Player) sender;
         MessageManager msg = plugin.getMessageManager();
 
-        // Verificar que esté autenticado
         if (!plugin.getSessionManager().isAuthenticated(player)) {
             msg.sendMessage(player, "auth.please-login");
             return true;
         }
 
-        // Determinar qué jugador consultar
         String targetPlayer = player.getName();
         boolean isAdmin = player.hasPermission("phoenixlogin.admin");
 
@@ -48,19 +47,23 @@ public class LoginHistoryCommand implements CommandExecutor {
         final String queryPlayer = targetPlayer;
         final boolean showingOther = !targetPlayer.equals(player.getName());
 
-        // Obtener historial
         plugin.getLoginHistoryManager().getLoginHistory(queryPlayer, 10)
                 .thenAccept(history -> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         if (history.isEmpty()) {
-                            player.sendMessage("§cNo hay historial de logins disponible.");
+                            player.sendMessage(msg.getMessage("history.no-history"));
                             return;
                         }
 
-                        // Mostrar historial
-                        player.sendMessage("§6§m-----------------------------");
-                        player.sendMessage("§6§l📊 Login History" + (showingOther ? " - " + queryPlayer : ""));
-                        player.sendMessage("§6§m-----------------------------");
+                        player.sendMessage(msg.getMessage("history.header"));
+                        if (showingOther) {
+                            Map<String, String> placeholders = MessageManager.createPlaceholders(
+                                    "player", queryPlayer);
+                            player.sendMessage(msg.getMessage("history.title-other", placeholders));
+                        } else {
+                            player.sendMessage(msg.getMessage("history.title"));
+                        }
+                        player.sendMessage(msg.getMessage("history.header"));
 
                         for (LoginHistoryManager.LoginEntry entry : history) {
                             String status = entry.getStatusColor() + entry.getStatusSymbol();
@@ -72,8 +75,10 @@ public class LoginHistoryCommand implements CommandExecutor {
                                     status + " §7" + date + " §8| §f" + ip + " §8| §e" + method);
                         }
 
-                        player.sendMessage("§6§m-----------------------------");
-                        player.sendMessage("§7Showing last " + history.size() + " login(s)");
+                        player.sendMessage(msg.getMessage("history.footer"));
+                        Map<String, String> countPlaceholders = MessageManager.createPlaceholders(
+                                "count", String.valueOf(history.size()));
+                        player.sendMessage(msg.getMessage("history.showing", countPlaceholders));
                     });
                 });
 

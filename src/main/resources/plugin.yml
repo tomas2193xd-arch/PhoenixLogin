@@ -1,68 +1,64 @@
 name: PhoenixLogin
-version: "${project.version}"
+version: "2.0.0"
 main: dev.tomle.phoenixlogin.PhoenixLogin
 api-version: "1.19"
-author: TomLe
-description: Advanced Authentication System with Multi-Language Support
+author: Tomas2193
+description: Advanced authentication plugin with sessions, captcha, anti-bot, and premium Mojang support.
+softdepend: [NoteBlockAPI]
 
 commands:
   login:
-    description: Login to your account
+    description: Log in to the server
+    usage: /login <password>
     aliases: [l]
-    usage: /<command> <password>
-
   register:
-    description: Register a new account
+    description: Create an account
+    usage: /register <password> <confirm>
     aliases: [reg]
-    usage: /<command> <password> <confirm>
-
   captcha:
-    description: Verify captcha code
-    usage: /<command> <code>
-    permission: phoenixlogin.captcha
-
+    description: Submit captcha code
+    usage: /captcha <code>
   changepassword:
     description: Change your password
-    aliases: [changepass, cp]
-    usage: /<command> <old> <new>
-
+    usage: /changepassword <old> <new>
   unregister:
     description: Delete your account
-    usage: /<command> <password>
-
+    usage: /unregister <password>
   phoenixlogin:
-    description: Main admin command
+    description: Admin commands
+    usage: /phoenixlogin <reload|info|unregister|stats>
     aliases: [plogin, pl]
-    usage: /<command>
-    permission: phoenixlogin.admin
-
   setspawn:
     description: Set the login spawn location
-    usage: /<command>
-    permission: phoenixlogin.setspawn
-
+    usage: /setspawn
   loginhistory:
     description: View login history
-    aliases: [lhistory, history]
-    usage: /<command> [player]
+    usage: /loginhistory [player]
+    aliases: [lhist]
+  premium:
+    description: Login as a premium (Mojang) player or toggle premium auto-login
+    usage: /premium
+    aliases: [prem]
+  cracked:
+    description: Select cracked mode (password login)
+    usage: /cracked
 
 permissions:
   phoenixlogin.admin:
-    description: Access to all admin commands
+    description: Access to admin commands
     default: op
-
   phoenixlogin.setspawn:
-    description: Set login spawn location
+    description: Set the login spawn
     default: op
-
   phoenixlogin.bypass:
-    description: Bypass login requirement
+    description: Bypass authentication
     default: false
-
-  phoenixlogin.captcha:
-    description: Allow use of captcha command
+  phoenixlogin.history:
+    description: View own login history
     default: true
-
+  phoenixlogin.history.others:
+    description: View other player login history
+    default: op
   phoenixlogin.premium:
-    description: Auto-login for premium accounts
-    default: false
+    description: Use premium auto-login
+    default: true

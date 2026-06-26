@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] - 2026-06-26
+
+### 🐛 Fixed
+- **CRITICAL: GameMode not restored after login** — Players were permanently stuck in ADVENTURE mode after authenticating. Now saves and restores GameMode, allowFlight, and flying state.
+- **CRITICAL: Premium auto-login on offline-mode servers** — Added clear console warning when premium is enabled on an offline-mode server. Improved error messages for players.
+- **ChatBlockListener blocking /verify** — The 2FA `/verify` command was blocked for unauthenticated players. Now included in defaults and the allowed commands list is configurable via `config.yml`.
+- **SimpleDateFormat thread-safety** — Replaced with `DateTimeFormatter` to prevent date corruption in async contexts.
+- **Login history cleanup never executed** — `cleanupOldEntries()` was defined but never called. Now runs automatically on startup.
+- **Inventory/GameMode lost on server shutdown** — Players still authenticating during a shutdown now get their inventory and state restored before the plugin disables.
+- **Session restore skipped location restore** — Players with valid sessions were not teleported back from void world correctly.
+- **Premium auto-login skipped music stop and bossbar removal** — Fixed incomplete post-auth flow.
+
+### ✨ Added
+- **Join message toggle** — New `settings.join-message-enabled` option in config to completely disable join messages (requested by community).
+- **Configurable allowed commands** — New `login.allowed-commands` list in config to whitelist extra commands during authentication.
+- **History auto-cleanup** — New `advanced.logging.history-cleanup-days` option (default: 90 days).
+- **Offline-mode premium warning** — Console shows a clear warning at startup if premium is enabled but server is in offline-mode.
+
+### 🔄 Changed
+- Version unified to 2.0.0 across all files (pom.xml, plugin.yml, config.yml, messages.yml)
+- Improved shutdown order — restores player state before closing database
+- `LocationManager` now saves full player state (GameMode, flight, location) instead of just location
+
+---
+
 ## [1.4.0] - 2025-12-05
 
 ### ✨ Added

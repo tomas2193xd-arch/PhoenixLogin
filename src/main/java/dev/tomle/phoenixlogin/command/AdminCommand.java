@@ -22,7 +22,11 @@ public class AdminCommand implements CommandExecutor {
         MessageManager msg = plugin.getMessageManager();
 
         if (!sender.hasPermission("phoenixlogin.admin")) {
-            msg.sendMessage((Player) sender, "commands.admin.no-permission");
+            if (sender instanceof Player) {
+                msg.sendMessage((Player) sender, "commands.admin.no-permission");
+            } else {
+                sender.sendMessage(msg.getMessage("commands.admin.no-permission"));
+            }
             return true;
         }
 
@@ -37,7 +41,6 @@ public class AdminCommand implements CommandExecutor {
             case "reload":
                 handleReload(sender);
                 break;
-
             case "info":
                 if (args.length < 2) {
                     sender.sendMessage(msg.getMessage("commands.admin.usage-info"));
@@ -45,7 +48,6 @@ public class AdminCommand implements CommandExecutor {
                 }
                 handleInfo(sender, args[1]);
                 break;
-
             case "unregister":
                 if (args.length < 2) {
                     sender.sendMessage(msg.getMessage("commands.admin.usage-unregister"));
@@ -53,11 +55,9 @@ public class AdminCommand implements CommandExecutor {
                 }
                 handleUnregister(sender, args[1]);
                 break;
-
             case "stats":
                 handleStats(sender);
                 break;
-
             default:
                 sendHelp(sender);
         }
@@ -108,9 +108,9 @@ public class AdminCommand implements CommandExecutor {
                         }
 
                         String registered = data.getRegistrationDate() > 0
-                                ? new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                                ? new java.text.SimpleDateFormat(msg.getMessage("format.date"))
                                         .format(new java.util.Date(data.getRegistrationDate()))
-                                : "N/A";
+                                : msg.getMessage("format.not-available");
 
                         String lastLogin = data.getLastLogin() > 0
                                 ? new java.text.SimpleDateFormat(msg.getMessage("format.date"))
@@ -143,9 +143,8 @@ public class AdminCommand implements CommandExecutor {
                             String message = msg.getMessage("commands.admin.unregister-player", placeholders);
                             sender.sendMessage(msg.colorize(message));
 
-                            plugin.getLogger().warning(sender.getName() + " unregistered account for: " + playerName);
+                            plugin.getLogger().warning(sender.getName() + " unregistered: " + playerName);
 
-                            // Si el jugador está online, kickearlo
                             Player target = plugin.getServer().getPlayer(playerName);
                             if (target != null && target.isOnline()) {
                                 target.kickPlayer(msg.getMessage("commands.admin.account-deleted-by-admin"));
@@ -167,21 +166,39 @@ public class AdminCommand implements CommandExecutor {
         int activeSessions = plugin.getSessionManager().getActiveSessionsCount();
         int authenticated = plugin.getSessionManager().getAuthenticatedCount();
         String dbType = plugin.getConfigManager().getDatabaseType();
-        String language = plugin.getConfigManager().getLanguage();
 
-        Map<String, String> placeholders = MessageManager.createPlaceholders(
-                "sessions", String.valueOf(activeSessions),
-                "authenticated", String.valueOf(authenticated),
-                "database", dbType,
-                "language", language);
+        // AntiBot stats (in-memory, safe for main thread)
+        int blocked = plugin.getAntiBotManager().getTotalBlocked();
+        int attacks = plugin.getAntiBotManager().getTotalAttacksDetected();
+        int blacklisted = plugin.getAntiBotManager().getBlacklistedCount();
+        boolean isAttack = plugin.getAntiBotManager().isAttackMode();
 
-        sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.title"));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.active-sessions", placeholders));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.authenticated", placeholders));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.database", placeholders));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.language", placeholders));
-        sender.sendMessage(msg.getMessage("commands.admin.stats.footer"));
+        // Fetch registered count async to avoid blocking main thread
+        plugin.getDatabaseManager().getRegisteredPlayersCountAsync().thenAccept(registered -> {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                Map<String, String> placeholders = MessageManager.createPlaceholders(
+                        "sessions", String.valueOf(activeSessions),
+                        "authenticated", String.valueOf(authenticated),
+                        "database", dbType,
+                        "registered", String.valueOf(registered),
+                        "blocked", String.valueOf(blocked),
+                        "attacks", String.valueOf(attacks),
+                        "blacklisted", String.valueOf(blacklisted),
+                        "antibot-status", isAttack ? "&c&lATTACK" : "&aClean");
+
+                sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.title"));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.header"));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.active-sessions", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.authenticated", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.database", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.registered-players", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.antibot-status", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.antibot-blocked", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.antibot-attacks", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.antibot-blacklisted", placeholders));
+                sender.sendMessage(msg.getMessage("commands.admin.stats.footer"));
+            });
+        });
     }
 }

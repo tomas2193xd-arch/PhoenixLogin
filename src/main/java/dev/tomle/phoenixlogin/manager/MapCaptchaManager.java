@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manages map-based captcha system with visual code rendering.
+ * Manages map-based captcha with visual code rendering.
  */
 public class MapCaptchaManager {
 
@@ -48,9 +48,8 @@ public class MapCaptchaManager {
     public boolean verifyCaptcha(Player player, String input) {
         UUID uuid = player.getUniqueId();
 
-        if (!activeCaptchas.containsKey(uuid)) {
+        if (!activeCaptchas.containsKey(uuid))
             return false;
-        }
 
         Long expiry = captchaExpiry.get(uuid);
         if (expiry != null && System.currentTimeMillis() > expiry) {
@@ -79,7 +78,8 @@ public class MapCaptchaManager {
     }
 
     private String generateCaptchaCode() {
-        Random secureRandom = new Random(System.nanoTime());
+        // Use SecureRandom instead of predictable Random
+        java.security.SecureRandom secureRandom = new java.security.SecureRandom();
         StringBuilder code = new StringBuilder(CAPTCHA_LENGTH);
         for (int i = 0; i < CAPTCHA_LENGTH; i++) {
             code.append(CHARACTERS.charAt(secureRandom.nextInt(CHARACTERS.length())));
@@ -89,47 +89,40 @@ public class MapCaptchaManager {
 
     @SuppressWarnings("deprecation")
     private void showCaptchaToPlayer(Player player, String code) {
-        // Create map with code
-        MapView mapView = Bukkit.createMap(player.getWorld());
+        MessageManager msg = plugin.getMessageManager();
 
-        // Clear default renderers
+        MapView mapView = Bukkit.createMap(player.getWorld());
         for (MapRenderer renderer : mapView.getRenderers()) {
             mapView.removeRenderer(renderer);
         }
-
-        // Add our renderer
         mapView.addRenderer(new CaptchaRenderer(code));
 
-        // Create map item
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
         meta.setMapView(mapView);
-        meta.setDisplayName("§6§lVERIFICATION CODE");
+        meta.setDisplayName(msg.getMessage("captcha.map-title"));
         List<String> lore = new ArrayList<>();
-        lore.add("§7Look at the map");
-        lore.add("§7and use §f/captcha <code>");
+        lore.add(msg.getMessage("captcha.map-lore-1"));
+        lore.add(msg.getMessage("captcha.map-lore-2"));
         meta.setLore(lore);
         mapItem.setItemMeta(meta);
 
-        // Give map to player
         player.getInventory().clear();
         player.getInventory().setItem(0, mapItem);
         player.updateInventory();
 
-        // 🎯 MOSTRAR TÍTULO EN PANTALLA (más visible que chat)
         plugin.getEffectsManager().showCaptchaTitle(player);
 
-        // Mensaje de chat minimalista (el título ya explica todo)
         player.sendMessage("");
-        player.sendMessage("§8§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-        player.sendMessage("§6§l⚠ ANTI-BOT §8- §7Mira el §fMAPA §7en tu mano");
-        player.sendMessage("§7Usa: §f/captcha <código> §8| §c⏱ 60s");
-        player.sendMessage("§8§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+        player.sendMessage(msg.getMessage("captcha.map-chat-header"));
+        player.sendMessage(msg.getMessage("captcha.map-chat-info"));
+        player.sendMessage(msg.getMessage("captcha.map-chat-usage"));
+        player.sendMessage(msg.getMessage("captcha.map-chat-header"));
         player.sendMessage("");
     }
 
     /**
-     * Custom renderer for captcha maps
+     * Custom map renderer for captcha codes.
      */
     private static class CaptchaRenderer extends MapRenderer {
 
@@ -143,34 +136,26 @@ public class MapCaptchaManager {
 
         @Override
         public void render(MapView map, MapCanvas canvas, Player player) {
-            if (rendered) {
+            if (rendered)
                 return;
-            }
 
-            // Create image
             BufferedImage image = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = image.createGraphics();
 
-            // Background
             g.setColor(new Color(45, 52, 54));
             g.fillRect(0, 0, 128, 128);
 
-            // Title
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 10));
-            String title = "VERIFICATION CODE";
-            g.drawString(title, 15, 20);
+            g.drawString("VERIFICATION CODE", 15, 20);
 
-            // Big code
             g.setFont(new Font("Monospaced", Font.BOLD, 20));
             g.setColor(Color.GREEN);
             g.drawString(code, 20, 70);
 
             g.dispose();
 
-            // Draw on canvas
             canvas.drawImage(0, 0, MapPalette.resizeImage(image));
-
             rendered = true;
         }
     }

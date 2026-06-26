@@ -1,7 +1,8 @@
 package dev.tomle.phoenixlogin.listener;
 
 import dev.tomle.phoenixlogin.PhoenixLogin;
-import dev.tomle.phoenixlogin.manager.MessageManager;
+import dev.tomle.phoenixlogin.manager.EffectsManager;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,219 +11,186 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Restricts unauthenticated players from performing most in-game actions.
+ * Players in the "loading" state (async data load) are NOT blocked to
+ * prevent false positives during rapid join/quit cycles.
+ */
 public class ProtectionListener implements Listener {
 
     private final PhoenixLogin plugin;
+
+    private static final List<String> ALLOWED_COMMANDS = Arrays.asList(
+            "/login", "/register", "/l", "/reg", "/captcha", "/premium", "/prem", "/cracked");
 
     public ProtectionListener(PhoenixLogin plugin) {
         this.plugin = plugin;
     }
 
-    // Bloquear movimiento
+    /**
+     * Returns true if this player should be blocked by protection.
+     * Returns false if the player is authenticated, bypassed, or still loading.
+     */
+    private boolean shouldBlock(Player player) {
+        if (plugin.getSessionManager().isAuthenticated(player))
+            return false;
+        if (player.hasPermission("phoenixlogin.bypass"))
+            return false;
+
+        // Don't block during async data load — session hasn't been set up yet
+        ConnectionListener cl = plugin.getConnectionListener();
+        if (cl != null && cl.isLoading(player))
+            return false;
+
+        return true;
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (!plugin.getConfigManager().isBlockMovement()) {
-            return;
-        }
-
         Player player = event.getPlayer();
+        if (!shouldBlock(player))
+            return;
+        if (!plugin.getConfigManager().isBlockMovement())
+            return;
 
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            // Permitir SOLO rotación de cabeza (yaw/pitch), bloquear movimiento X/Y/Z
-            if (event.getFrom().getX() != event.getTo().getX() ||
-                    event.getFrom().getZ() != event.getTo().getZ() ||
-                    Math.abs(event.getFrom().getY() - event.getTo().getY()) > 0.1) {
-                // Preservar la rotación de la cabeza pero mover al jugador de vuelta
-                event.setTo(event.getFrom().setDirection(event.getTo().getDirection()));
+        if (event.getFrom().getBlockX() != event.getTo().getBlockX() ||
+                event.getFrom().getBlockY() != event.getTo().getBlockY() ||
+                event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
+
+            if (plugin.getWorldManager().isInVoidWorld(player)) {
+                // Preserve head rotation so players can look at captcha maps
+                org.bukkit.Location voidSpawn = plugin.getWorldManager().getVoidSpawnLocation().clone();
+                voidSpawn.setYaw(event.getTo().getYaw());
+                voidSpawn.setPitch(event.getTo().getPitch());
+                event.setTo(voidSpawn);
+            } else {
+                event.setTo(event.getFrom());
             }
         }
     }
 
-    // Bloquear comandos
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!plugin.getConfigManager().isBlockCommands()) {
-            return;
-        }
-
         Player player = event.getPlayer();
+        if (!shouldBlock(player))
+            return;
+        if (!plugin.getConfigManager().isBlockCommands())
+            return;
 
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            String command = event.getMessage().toLowerCase().split(" ")[0];
+        String message = event.getMessage().toLowerCase().split(" ")[0];
 
-            // Lista de comandos SIEMPRE permitidos (autenticación)
-            String[] allowedCommands = {
-                    "/login",
-                    "/register",
-                    "/captcha",
-                    "/l",
-                    "/reg",
-                    "/loguear",
-                    "/registrar"
-            };
-
-            // Verificar si el comando está en la lista de permitidos
-            boolean allowed = false;
-            for (String cmd : allowedCommands) {
-                if (command.equalsIgnoreCase(cmd)) {
-                    allowed = true;
-                    break;
-                }
-            }
-
-            if (!allowed) {
-                event.setCancelled(true);
-                plugin.getMessageManager().sendMessage(player, "blocked.command");
-            }
+        if (!ALLOWED_COMMANDS.contains(message)) {
+            event.setCancelled(true);
+            plugin.getMessageManager().sendMessage(player, "blocked.command");
         }
     }
 
-    // Bloquear chat
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        if (!shouldBlock(player))
+            return;
 
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-
-            // Enviar mensaje en el thread principal
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                plugin.getMessageManager().sendMessage(player, "blocked.chat");
-            });
-        }
+        event.setCancelled(true);
+        plugin.getMessageManager().sendMessage(player, "blocked.chat");
     }
 
-    // Bloquear interacciones
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!plugin.getConfigManager().isBlockInteract()) {
+        Player player = event.getPlayer();
+        if (!shouldBlock(player))
+            return;
+        if (!plugin.getConfigManager().isBlockInteract())
+            return;
+
+        // Allow interact in void world for ITEM captcha
+        if (plugin.getWorldManager().isInVoidWorld(player) &&
+                plugin.getCaptchaManager().hasPendingCaptcha(player)) {
             return;
         }
 
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!plugin.getConfigManager().isBlockInteract()) {
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player))
             return;
-        }
-
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
-    }
-
-    // Bloquear daño
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-
         Player player = (Player) event.getEntity();
 
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            // SIEMPRE cancelar daño si no está autenticado
-            event.setCancelled(true);
-
-            // Extra seguridad: si el jugador está cayendo en el void, teletransportarlo de
-            // vuelta
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    if (plugin.getWorldManager().isInVoidWorld(player)) {
-                        player.teleport(plugin.getWorldManager().getVoidSpawnLocation());
-                    }
-                });
-            }
-
-            // Si el jugador está debajo de Y=0 en el VoidWorld, teletransportarlo de vuelta
-            if (plugin.getWorldManager().isInVoidWorld(player) && player.getLocation().getY() < 0) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    player.teleport(plugin.getWorldManager().getVoidSpawnLocation());
-                });
+        // Always cancel damage from our login fireworks
+        if (event instanceof EntityDamageByEntityEvent) {
+            EntityDamageByEntityEvent damageByEntity = (EntityDamageByEntityEvent) event;
+            if (damageByEntity.getDamager() instanceof Firework) {
+                Firework fw = (Firework) damageByEntity.getDamager();
+                if (fw.hasMetadata(EffectsManager.FIREWORK_META_KEY)) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
         }
+
+        if (!shouldBlock(player))
+            return;
+        if (!plugin.getConfigManager().isBlockDamage())
+            return;
+
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerDamageEntity(EntityDamageByEntityEvent event) {
-        if (!plugin.getConfigManager().isBlockDamage()) {
-            return;
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        // Cancel firework damage from login celebrations
+        if (event.getDamager() instanceof Firework) {
+            Firework fw = (Firework) event.getDamager();
+            if (fw.hasMetadata(EffectsManager.FIREWORK_META_KEY)) {
+                event.setCancelled(true);
+                return;
+            }
         }
 
         if (event.getDamager() instanceof Player) {
-            Player player = (Player) event.getDamager();
-
-            if (!plugin.getSessionManager().isAuthenticated(player)) {
+            Player damager = (Player) event.getDamager();
+            if (shouldBlock(damager)) {
                 event.setCancelled(true);
             }
         }
     }
 
-    // Bloquear rotura de bloques
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
+        if (!shouldBlock(event.getPlayer()))
+            return;
+        event.setCancelled(true);
     }
 
-    // Bloquear colocación de bloques
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockPlace(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
-    }
-
-    // Bloquear drops
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerDropItem(PlayerDropItemEvent event) {
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
-    }
-
-    // Bloquear pickups
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        Player player = event.getPlayer();
-
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            event.setCancelled(true);
-        }
-    }
-
-    // Bloquear inventory clicks (excepto para captcha)
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) {
+        if (!shouldBlock(event.getPlayer()))
             return;
-        }
+        event.setCancelled(true);
+    }
 
-        Player player = (Player) event.getWhoClicked();
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if (!shouldBlock(event.getPlayer()))
+            return;
+        event.setCancelled(true);
+    }
 
-        if (!plugin.getSessionManager().isAuthenticated(player)) {
-            // No cancelar si hay un captcha activo (el listener de captcha lo manejará)
-            if (!plugin.getCaptchaManager().hasPendingCaptcha(player)) {
-                event.setCancelled(true);
-            }
-        }
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerPickupItem(org.bukkit.event.entity.EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player))
+            return;
+        Player player = (Player) event.getEntity();
+        if (!shouldBlock(player))
+            return;
+        event.setCancelled(true);
     }
 }

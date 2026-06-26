@@ -6,6 +6,7 @@ import dev.tomle.phoenixlogin.command.*;
 import dev.tomle.phoenixlogin.api.PhoenixLoginAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PhoenixLogin extends JavaPlugin {
@@ -22,18 +23,21 @@ public class PhoenixLogin extends JavaPlugin {
     private MusicManager musicManager;
     private LoginHistoryManager loginHistoryManager;
     private InventoryManager inventoryManager;
+    private AntiBotManager antiBotManager;
+    private PremiumManager premiumManager;
 
+    private ConnectionListener connectionListener;
     private BukkitAudiences adventure;
 
     @Override
     public void onEnable() {
         long startTime = System.currentTimeMillis();
 
-        // Mostrar banner épico
+        dev.tomle.phoenixlogin.util.ConsoleLogger.setLogger(getLogger());
         dev.tomle.phoenixlogin.util.ConsoleLogger.showBanner(getDescription().getVersion());
 
-        // 🔒 SEGURIDAD: Filtrar contraseñas de los logs de consola
-        dev.tomle.phoenixlogin.listener.PasswordLogFilter.register();
+        // Filter passwords from console logs
+        PasswordLogFilter.register();
 
         this.adventure = BukkitAudiences.create(this);
 
@@ -42,27 +46,41 @@ public class PhoenixLogin extends JavaPlugin {
         }
 
         saveDefaultConfig();
-        saveResource("messages_es.yml", false);
-        saveResource("messages_en.yml", false);
+        saveResource("messages.yml", false);
 
         initializeManagers();
 
-        // Initialize API for external plugins
         PhoenixLoginAPI.initialize(this);
 
         registerCommands();
         registerListeners();
 
-        // Initialize bStats (silent)
-        int pluginId = 23456;
-        new Metrics(this, pluginId);
+        // bStats
+        new Metrics(this, 23456);
 
-        // Mostrar estadísticas
         int playerCount = databaseManager.getRegisteredPlayersCount();
         String dbType = configManager.getDatabaseType().toUpperCase();
-        String language = configManager.getLanguage().toUpperCase();
 
-        dev.tomle.phoenixlogin.util.ConsoleLogger.showStartupStats(playerCount, dbType, language);
+        dev.tomle.phoenixlogin.util.ConsoleLogger.showStartupStats(playerCount, dbType);
+
+        if (premiumManager.isEnabled()) {
+            getLogger().info("Premium (Mojang) auto-login: ENABLED");
+            // Warn if server is in offline-mode (premium UUID comparison will always fail)
+            if (!getServer().getOnlineMode()) {
+                getLogger().warning("========================================");
+                getLogger().warning("Server is in OFFLINE MODE!");
+                getLogger().warning("Premium auto-login via UUID comparison");
+                getLogger().warning("will NOT work unless you are behind a");
+                getLogger().warning("BungeeCord/Velocity proxy with online-mode.");
+                getLogger().warning("========================================");
+            }
+        }
+
+        // Clean up old login history entries on startup
+        int cleanupDays = configManager.getHistoryCleanupDays();
+        if (cleanupDays > 0) {
+            loginHistoryManager.cleanupOldEntries(cleanupDays);
+        }
 
         long loadTime = System.currentTimeMillis() - startTime;
         dev.tomle.phoenixlogin.util.ConsoleLogger.loaded(loadTime);
@@ -71,6 +89,18 @@ public class PhoenixLogin extends JavaPlugin {
     @Override
     public void onDisable() {
         dev.tomle.phoenixlogin.util.ConsoleLogger.shutdown();
+
+        // Restore inventories for any players still authenticating
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (!sessionManager.isAuthenticated(player)) {
+                locationManager.restoreLocation(player);
+                inventoryManager.restoreInventory(player);
+            }
+        }
+
+        if (antiBotManager != null) {
+            antiBotManager.shutdown();
+        }
 
         if (worldManager != null) {
             worldManager.shutdown();
@@ -91,7 +121,6 @@ public class PhoenixLogin extends JavaPlugin {
     }
 
     private void initializeManagers() {
-
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
         this.databaseManager = new DatabaseManager(this);
@@ -104,18 +133,17 @@ public class PhoenixLogin extends JavaPlugin {
         this.musicManager = new MusicManager(this);
         this.loginHistoryManager = new LoginHistoryManager(this);
         this.inventoryManager = new InventoryManager(this);
+        this.antiBotManager = new AntiBotManager(this);
+        this.premiumManager = new PremiumManager(this);
 
         databaseManager.initialize();
         worldManager.initialize();
         loginHistoryManager.initialize();
-    }
-
-    public InventoryManager getInventoryManager() {
-        return inventoryManager;
+        antiBotManager.initialize();
+        premiumManager.initialize();
     }
 
     private void registerCommands() {
-
         getCommand("login").setExecutor(new LoginCommand(this));
         getCommand("register").setExecutor(new RegisterCommand(this));
         getCommand("captcha").setExecutor(new CaptchaCommand(this));
@@ -125,14 +153,21 @@ public class PhoenixLogin extends JavaPlugin {
         getCommand("phoenixlogin").setTabCompleter(new AdminCommandTabCompleter());
         getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
         getCommand("loginhistory").setExecutor(new LoginHistoryCommand(this));
+        getCommand("premium").setExecutor(new PremiumCommand(this));
+        getCommand("cracked").setExecutor(new CrackedCommand(this));
     }
 
     private void registerListeners() {
-
-        getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
+        this.connectionListener = new ConnectionListener(this);
+        getServer().getPluginManager().registerEvents(connectionListener, this);
         getServer().getPluginManager().registerEvents(new ProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new CaptchaListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatBlockListener(this), this);
+        getServer().getPluginManager().registerEvents(new CleanChatListener(this), this);
+    }
+
+    public ConnectionListener getConnectionListener() {
+        return connectionListener;
     }
 
     public BukkitAudiences adventure() {
@@ -184,5 +219,17 @@ public class PhoenixLogin extends JavaPlugin {
 
     public LoginHistoryManager getLoginHistoryManager() {
         return loginHistoryManager;
+    }
+
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
+    }
+
+    public AntiBotManager getAntiBotManager() {
+        return antiBotManager;
+    }
+
+    public PremiumManager getPremiumManager() {
+        return premiumManager;
     }
 }

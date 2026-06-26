@@ -21,53 +21,41 @@ public class AuthSecurityManager {
 
     public boolean isAccountLocked(Player player) {
         Long lockExpiry = lockedAccounts.get(player.getUniqueId());
-
-        if (lockExpiry == null) {
+        if (lockExpiry == null)
             return false;
-        }
-
         if (System.currentTimeMillis() >= lockExpiry) {
             lockedAccounts.remove(player.getUniqueId());
             return false;
         }
-
         return true;
     }
 
     public long getLockoutRemainingTime(Player player) {
         Long lockExpiry = lockedAccounts.get(player.getUniqueId());
-        if (lockExpiry == null) {
+        if (lockExpiry == null)
             return 0;
-        }
-
         long remaining = (lockExpiry - System.currentTimeMillis()) / 1000;
         return Math.max(0, remaining);
     }
 
     public void recordFailedAttempt(Player player) {
         FailedAttempts attempts = failedAttempts.computeIfAbsent(
-                player.getUniqueId(),
-                k -> new FailedAttempts());
-
+                player.getUniqueId(), k -> new FailedAttempts());
         attempts.increment();
 
         int maxAttempts = plugin.getConfigManager().getMaxLoginAttempts();
-
         if (attempts.getCount() >= maxAttempts) {
             lockAccount(player);
         }
 
-        // Log del intento fallido
         String ip = player.getAddress().getAddress().getHostAddress();
         plugin.getDatabaseManager().logLoginAttemptAsync(player.getName(), ip, false);
     }
 
     public void recordSuccessfulAttempt(Player player) {
-        // Limpiar intentos fallidos
         failedAttempts.remove(player.getUniqueId());
         lockedAccounts.remove(player.getUniqueId());
 
-        // Log del intento exitoso
         String ip = player.getAddress().getAddress().getHostAddress();
         plugin.getDatabaseManager().logLoginAttemptAsync(player.getName(), ip, true);
     }
@@ -77,7 +65,6 @@ public class AuthSecurityManager {
         if (attempts == null) {
             return plugin.getConfigManager().getMaxLoginAttempts();
         }
-
         int max = plugin.getConfigManager().getMaxLoginAttempts();
         return Math.max(0, max - attempts.getCount());
     }
@@ -86,8 +73,7 @@ public class AuthSecurityManager {
         int lockoutDuration = plugin.getConfigManager().getLockoutDuration();
         long lockExpiry = System.currentTimeMillis() + (lockoutDuration * 1000L);
         lockedAccounts.put(player.getUniqueId(), lockExpiry);
-
-        plugin.getLogger().warning("Account locked for " + player.getName() + " due to too many failed attempts.");
+        plugin.getLogger().warning("Account locked: " + player.getName() + " (too many failed attempts)");
     }
 
     public void resetAttempts(Player player) {
@@ -104,21 +90,18 @@ public class AuthSecurityManager {
         }
 
         if (plugin.getConfigManager().isPasswordRequireUppercase()) {
-            if (!password.matches(".*[A-Z].*")) {
+            if (!password.matches(".*[A-Z].*"))
                 return false;
-            }
         }
 
         if (plugin.getConfigManager().isPasswordRequireNumbers()) {
-            if (!password.matches(".*[0-9].*")) {
+            if (!password.matches(".*[0-9].*"))
                 return false;
-            }
         }
 
         if (plugin.getConfigManager().isPasswordRequireSpecial()) {
-            if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+            if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*"))
                 return false;
-            }
         }
 
         return true;
@@ -129,7 +112,6 @@ public class AuthSecurityManager {
         lockedAccounts.remove(uuid);
     }
 
-    // Inner class para rastrear intentos fallidos
     private static class FailedAttempts {
         private int count;
         private long lastAttempt;

@@ -1,8 +1,12 @@
 package dev.tomle.phoenixlogin.command;
 
 import dev.tomle.phoenixlogin.PhoenixLogin;
+import dev.tomle.phoenixlogin.api.event.LoginFailedEvent;
+import dev.tomle.phoenixlogin.api.event.PlayerLoginEvent;
+import dev.tomle.phoenixlogin.api.event.PreLoginEvent;
 import dev.tomle.phoenixlogin.manager.MessageManager;
 import dev.tomle.phoenixlogin.model.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +25,7 @@ public class LoginCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
@@ -40,7 +43,7 @@ public class LoginCommand implements CommandExecutor {
             return true;
         }
 
-        // 🛡 BLOQUEO: Si tiene captcha pendiente, DEBE completarlo primero
+        // Block if captcha is pending
         if (plugin.getCaptchaManager().hasPendingCaptcha(player)) {
             msg.sendMessage(player, "captcha.required");
             plugin.getEffectsManager().playErrorSound(player);
@@ -57,14 +60,32 @@ public class LoginCommand implements CommandExecutor {
             Map<String, String> placeholders = MessageManager.createPlaceholders(
                     "duration", String.valueOf(remaining));
             msg.sendMessage(player, "auth.account-locked", placeholders);
+
+            // Fire LoginFailedEvent for locked accounts
+            int maxAttempts = plugin.getConfigManager().getMaxLoginAttempts();
+            Bukkit.getPluginManager().callEvent(
+                    new LoginFailedEvent(player, LoginFailedEvent.FailReason.LOCKED_OUT, maxAttempts));
             return true;
         }
 
         String password = args[0];
 
+        // Fire PreLoginEvent (cancellable)
+        PreLoginEvent preLoginEvent = new PreLoginEvent(player, password);
+        Bukkit.getPluginManager().callEvent(preLoginEvent);
+
+        if (preLoginEvent.isCancelled()) {
+            if (preLoginEvent.getCancelMessage() != null) {
+                player.sendMessage(preLoginEvent.getCancelMessage());
+            }
+            return true;
+        }
+
         plugin.getDatabaseManager().verifyPasswordAsync(player.getName(), password)
                 .thenAccept(success -> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        if (!player.isOnline())
+                            return;
                         if (success) {
                             handleSuccessfulLogin(player);
                         } else {
@@ -84,40 +105,24 @@ public class LoginCommand implements CommandExecutor {
         String ip = player.getAddress().getAddress().getHostAddress();
         plugin.getDatabaseManager().updateLoginAsync(player.getName(), ip);
 
-        // Registrar en historial
         plugin.getLoginHistoryManager().logLoginAttempt(player.getName(), ip, true, "password");
-
         plugin.getAuthSecurityManager().recordSuccessfulAttempt(player);
-
-        // Limpiar inventario de captcha si existe
-        // Limpiar inventario de captcha si existe (YA NO NECESARIO, LO HACE EL JOIN)
-        // player.getInventory().clear();
 
         player.setWalkSpeed(0.2f);
         player.setFlySpeed(0.1f);
 
-        // RESTAURAR ubicación del jugador (desde VoidAuthWorld al mundo real)
-        // plugin.getLogger().info(">>> BEFORE restoreLocation for " + player.getName()
-        // + " ... " + player.getLocation().getBlockZ() + ")");
-
         plugin.getLocationManager().restoreLocation(player);
-
-        // 🛡 LIMPIEZA: Borrar items de Auth/Captcha ANTES de restaurar
         plugin.getCaptchaManager().clearCaptchaItems(player);
-
-        // ✅ Restaurar inventario (items reales) una vez en el mundo correcto
         plugin.getInventoryManager().restoreInventory(player);
 
-        // plugin.getLogger().info(">>> AFTER restoreLocation for " + player.getName() +
-        // " ... " + player.getLocation().getBlockZ() + ")");
+        // Join message (respects config toggle)
+        if (plugin.getConfigManager().isJoinMessageEnabled()) {
+            String joinMsg = msg.getMessage("join.message",
+                    MessageManager.createPlaceholders("player", player.getName()));
+            plugin.getServer().broadcastMessage(joinMsg);
+        }
 
-        String joinMsg = msg.getMessage("join.message",
-                MessageManager.createPlaceholders("player", player.getName()));
-        plugin.getServer().broadcastMessage(joinMsg);
-
-        // 🎵 DETENER MÚSICA
         plugin.getMusicManager().stopMusic(player);
-
         plugin.getEffectsManager().showLoginSuccessTitle(player);
         plugin.getEffectsManager().playLoginSound(player);
         plugin.getEffectsManager().playLoginParticles(player);
@@ -125,18 +130,27 @@ public class LoginCommand implements CommandExecutor {
 
         msg.sendMessage(player, "auth.login-success");
 
-        plugin.getLogger().info(player.getName() + " has logged in successfully.");
+        if (!plugin.getConfigManager().isCleanConsole()) {
+            plugin.getLogger().info(player.getName() + " logged in.");
+        }
+
+        // Fire PlayerLoginEvent
+        Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(player, false));
     }
 
     private void handleFailedLogin(Player player) {
         MessageManager msg = plugin.getMessageManager();
 
         plugin.getAuthSecurityManager().recordFailedAttempt(player);
-
         int remaining = plugin.getAuthSecurityManager().getRemainingAttempts(player);
 
         plugin.getEffectsManager().playErrorSound(player);
         plugin.getEffectsManager().playErrorParticles(player);
+
+        // Fire LoginFailedEvent
+        int totalAttempts = plugin.getConfigManager().getMaxLoginAttempts() - remaining;
+        Bukkit.getPluginManager().callEvent(
+                new LoginFailedEvent(player, LoginFailedEvent.FailReason.WRONG_PASSWORD, totalAttempts));
 
         if (remaining > 0) {
             Map<String, String> placeholders = MessageManager.createPlaceholders(

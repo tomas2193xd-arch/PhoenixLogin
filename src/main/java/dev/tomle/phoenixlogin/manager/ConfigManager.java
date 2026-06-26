@@ -20,11 +20,6 @@ public class ConfigManager {
         this.config = plugin.getConfig();
     }
 
-    // Language
-    public String getLanguage() {
-        return config.getString("language", "en");
-    }
-
     // Database
     public String getDatabaseType() {
         return config.getString("database.type", "SQLITE").toUpperCase();
@@ -54,7 +49,7 @@ public class ConfigManager {
         return config.getInt("database.mysql.pool-size", 10);
     }
 
-    // Security - Password
+    // Security — Password
     public int getMinPasswordLength() {
         return config.getInt("security.password.min-length", 4);
     }
@@ -75,7 +70,7 @@ public class ConfigManager {
         return config.getBoolean("security.password.require-special", false);
     }
 
-    // Security - Brute Force
+    // Security — Brute Force
     public int getMaxLoginAttempts() {
         return config.getInt("security.max-login-attempts", 3);
     }
@@ -84,7 +79,7 @@ public class ConfigManager {
         return config.getInt("security.lockout-duration", 300);
     }
 
-    // Security - Sessions
+    // Security — Sessions
     public boolean isSessionsEnabled() {
         return config.getBoolean("security.sessions.enabled", true);
     }
@@ -175,7 +170,7 @@ public class ConfigManager {
         return new Location(world, x, y, z, yaw, pitch);
     }
 
-    // VoidAuthWorld
+    // Void World
     public boolean isVoidWorldEnabled() {
         return config.getBoolean("void-world.enabled", true);
     }
@@ -237,30 +232,47 @@ public class ConfigManager {
         return config.getString("effects.particles.on-error", "VILLAGER_ANGRY");
     }
 
-    // Premium
+    // Settings
+    public boolean isHidePlayers() {
+        return config.getBoolean("settings.hide-players", true);
+    }
+
+    public boolean isCleanChat() {
+        return config.getBoolean("settings.clean-chat", true);
+    }
+
+    public boolean isCleanConsole() {
+        return config.getBoolean("settings.clean-console", true);
+    }
+
+    // Premium (Mojang) Authentication
     public boolean isPremiumEnabled() {
         return config.getBoolean("premium.enabled", false);
     }
 
     public boolean isPremiumAutoLogin() {
-        return config.getBoolean("premium.auto-login", false);
+        return config.getBoolean("premium.auto-login", true);
+    }
+
+    public boolean isPremiumKickNameTaken() {
+        return config.getBoolean("premium.kick-on-name-taken", false);
     }
 
     // Discord
     public boolean isDiscordEnabled() {
-        return config.getBoolean("discord.enabled", false);
+        return config.getBoolean("advanced.discord.enabled", false);
     }
 
     public String getDiscordWebhookUrl() {
-        return config.getString("discord.webhook-url", "");
+        return config.getString("advanced.discord.webhook-url", "");
     }
 
     public boolean isNotifyNewRegister() {
-        return config.getBoolean("discord.notify-new-register", true);
+        return config.getBoolean("advanced.discord.notify-new-register", true);
     }
 
     public boolean isNotifySuspiciousLogin() {
-        return config.getBoolean("discord.notify-suspicious-login", true);
+        return config.getBoolean("advanced.discord.notify-suspicious-login", true);
     }
 
     // Advanced
@@ -305,7 +317,7 @@ public class ConfigManager {
         return config.getInt("login-music.loop-interval", 100);
     }
 
-    // NBS Music (NoteBlockAPI)
+    // NBS Music
     public boolean useNBSMusic() {
         return config.getBoolean("login-music.use-nbs", false);
     }
@@ -316,5 +328,20 @@ public class ConfigManager {
 
     public float getNBSVolume() {
         return (float) config.getDouble("login-music.nbs-volume", 1.0);
+    }
+
+    // IP Account Limit
+    public int getMaxAccountsPerIP() {
+        return config.getInt("security.max-accounts-per-ip", 3);
+    }
+
+    // Join message toggle
+    public boolean isJoinMessageEnabled() {
+        return config.getBoolean("settings.join-message-enabled", true);
+    }
+
+    // History cleanup days
+    public int getHistoryCleanupDays() {
+        return config.getInt("advanced.logging.history-cleanup-days", 90);
     }
 }

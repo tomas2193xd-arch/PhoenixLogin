@@ -1,0 +1,268 @@
+# ======================================================
+#  PhoenixLogin v2.0 — Configuración de Mensajes
+#  Todos los mensajes son personalizables.
+#  Usa & para códigos de color. Placeholders: {key}
+# ======================================================
+
+prefix: "&8[&6PhoenixLogin&8] &r"
+
+# ======================================================
+#  AUTENTICACIÓN
+# ======================================================
+auth:
+  login-success: "&aHas iniciado sesión correctamente."
+  register-success: "&aRegistrado exitosamente."
+  session-restored: "&aSesión restaurada. Bienvenido de vuelta."
+
+  already-logged: "&cYa has iniciado sesión."
+  not-registered: "&cNo estás registrado. Usa &f/register <contraseña> <confirmar>"
+  already-registered: "&cYa estás registrado. Usa &f/login <contraseña>"
+  wrong-password: "&cContraseña incorrecta. &7Intentos restantes: &e{attempts}"
+  password-mismatch: "&cLas contraseñas no coinciden."
+  password-too-short: "&cContraseña muy corta. Mínimo: &e{min}"
+  password-too-long: "&cContraseña muy larga. Máximo: &e{max}"
+  password-requirements: "&cLa contraseña no cumple los requisitos."
+  account-locked: "&cCuenta bloqueada. Intenta de nuevo en &e{duration}s&c."
+  register-failed: "&cRegistro fallido. Contacta a un administrador."
+  too-many-accounts: "&cDemasiadas cuentas registradas desde tu IP."
+
+  register-usage: "&7Uso: &f/register <contraseña> <confirmar>"
+  login-usage: "&7Uso: &f/login <contraseña>"
+
+  please-login: "&ePor favor inicia sesión: &f/login <contraseña>"
+  please-register: "&ePor favor regístrate: &f/register <contraseña> <confirmar>"
+
+# ======================================================
+#  CAPTCHA
+# ======================================================
+captcha:
+  success: "&aCaptcha verificado."
+  failed: "&cCódigo incorrecto. Revisa tu mapa."
+  usage: "&7Uso: &f/captcha <código>"
+  item-instruction: "&eColoca &f{item} &een el slot &f{slot}"
+  math-instruction: "&eResuelve: &f{question} &e= ?"
+  not-required: "&cEl captcha no es necesario."
+  already-authenticated: "&cYa estás autenticado."
+  no-pending: "&cNo hay captcha pendiente."
+  next-step-login: "&eAhora inicia sesión: &f/login <contraseña>"
+  next-step-register: "&eAhora regístrate: &f/register <contraseña> <confirmar>"
+  required: "&cResuelve el captcha primero. Revisa tu mapa."
+  suggestion: "&eUsa &b/captcha <código> &epara verificarte."
+  map-title: "&6&lCÓDIGO DE VERIFICACIÓN"
+  map-lore-1: "&7Mira el mapa"
+  map-lore-2: "&7y usa &f/captcha <código>"
+  map-chat-header: "&8&l================================"
+  map-chat-info: "&6&l! ANTI-BOT &8- &7Mira el &fMAPA &7en tu mano"
+  map-chat-usage: "&7Usa: &f/captcha <código> &8| &c60s"
+
+# ======================================================
+#  ACCIONES BLOQUEADAS
+# ======================================================
+blocked:
+  command: "&cAutentícate primero para usar comandos."
+  chat: "&cAutentícate primero para chatear."
+
+# ======================================================
+#  COMANDOS
+# ======================================================
+commands:
+  console-only: "&cSolo consola."
+  player-only: "&cSolo jugadores."
+  no-permission: "&cSin permiso."
+
+  admin:
+    no-permission: "&cSin permiso."
+    reload: "&aConfiguración recargada."
+    player-not-found: "&cJugador no encontrado."
+
+    help:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Comandos"
+      reload: "&e/plogin reload &8- &7Recargar configuración"
+      info: "&e/plogin info <jugador> &8- &7Info del jugador"
+      unregister: "&e/plogin unregister <jugador> &8- &7Eliminar cuenta"
+      stats: "&e/plogin stats &8- &7Estadísticas"
+      footer: "&6&m-----------------------------"
+
+    user-info: |
+      &6&m-----------------------------
+      &6&lInfo del Jugador
+      &6&m-----------------------------
+      &7Nombre: &f{player}
+      &7Registrado: &f{registered}
+      &7Última IP: &f{ip}
+      &7Último Login: &f{last-login}
+      &6&m-----------------------------
+
+    unregister-player: "&aCuenta &e{player} &aeliminada."
+    account-deleted-by-admin: "&cTu cuenta fue eliminada por un administrador."
+
+    stats:
+      header: "&6&m-----------------------------"
+      title: "&6&lPhoenix&e&lLogin &8- &7Estadísticas"
+      active-sessions: "&7Sesiones: &e{sessions}"
+      authenticated: "&7Autenticados: &a{authenticated}"
+      database: "&7Base de datos: &f{database}"
+      registered-players: "&7Registrados: &f{registered}"
+      antibot-status: "&7AntiBot: {antibot-status}"
+      antibot-blocked: "&7Bloqueados: &c{blocked}"
+      antibot-attacks: "&7Ataques: &c{attacks}"
+      antibot-blacklisted: "&7Lista negra: &e{blacklisted}"
+      footer: "&6&m-----------------------------"
+
+    usage-info: "&7Uso: &f/plogin info <jugador>"
+    usage-unregister: "&7Uso: &f/plogin unregister <jugador>"
+
+  changepassword:
+    usage: "&7Uso: &f/changepassword <antigua> <nueva>"
+    success: "&aContraseña cambiada."
+    wrong-old: "&cContraseña actual incorrecta."
+    failed: "&cError al cambiar la contraseña."
+    requirements-not-met: "&cLa nueva contraseña no cumple los requisitos."
+
+  unregister:
+    usage: "&7Uso: &f/unregister <contraseña>"
+    success: "&cCuenta eliminada."
+    wrong-password: "&cContraseña incorrecta."
+    failed: "&cError al eliminar la cuenta."
+    kick-message: "&eTu cuenta ha sido eliminada."
+
+  setspawn:
+    no-permission: "&cSin permiso."
+    success: "&aSpawn de login establecido."
+    world: "&7Mundo: &f{world}"
+    coordinates: "&7Posición: &f{x}, {y}, {z}"
+    info: "&eLos jugadores serán teletransportados aquí después del login."
+
+# ======================================================
+#  ANTI-BOT
+# ======================================================
+antibot:
+  verification-kick: "&6&lVerificación de Conexión\n\n&7Tu conexión está siendo verificada.\n&7Por favor reconéctate para continuar.\n\n&8Esta verificación es automática y previene bots.\n&8Las IPs verificadas se recuerdan por {days} días."
+  rate-limited: "&cDemasiadas conexiones. Intenta de nuevo en {time}s."
+  attack-mode: "&cEl servidor está bajo protección. Intenta más tarde."
+  invalid-name: "&cNombre de usuario inválido."
+  blacklisted: "&cHas sido bloqueado temporalmente."
+  attack-started: "&c[AntiBot] Ataque detectado. Protección activa."
+  attack-ended: "&a[AntiBot] Ataque finalizado. Modo normal restaurado."
+
+# ======================================================
+#  MENSAJES DE KICK
+# ======================================================
+kick:
+  too-many-attempts: "&cDemasiados intentos fallidos."
+  timeout: "&cTiempo de autenticación agotado."
+
+# ======================================================
+#  TÍTULOS
+# ======================================================
+titles:
+  welcome:
+    title: "&6&lBIENVENIDO"
+    subtitle: "&7Por favor autentícate"
+
+  register:
+    title: "&a&lREGISTRADO"
+    subtitle: "&7Cuenta creada"
+
+  login:
+    title: "&a&lBIENVENIDO DE VUELTA"
+    subtitle: "&7Sesión iniciada"
+
+  error:
+    title: "&c&lERROR"
+    subtitle: "&7{message}"
+
+  captcha:
+    title: "&6&lVERIFICACIÓN"
+    subtitle: "&eMira el MAPA &7y usa &f/captcha <código>"
+
+  warning-critical:
+    title: "&c&l!! {time} !!"
+    subtitle: "&e&lAUTENTÍCATE AHORA"
+
+  warning-medium:
+    title: "&6{time}s"
+    subtitle: "&eAutentícate pronto"
+
+# ======================================================
+#  BARRAS DE JEFE
+# ======================================================
+bossbar:
+  captcha: "&6&lVerificar Captcha -- Revisa tu mapa"
+  login: "&e&lLogin -- /login <contraseña>"
+  register: "&e&lRegistro -- /register <contraseña> <confirmar>"
+  please-login: "&e&lLogin -- /login <contraseña>"
+  please-register: "&e&lRegistro -- /register <contraseña> <confirmar>"
+
+# ======================================================
+#  AVISOS DE TIEMPO
+# ======================================================
+timer:
+  critical-warning:
+    title: "&c&l!! ADVERTENCIA !!"
+    message: "&e¡Solo quedan &c{time}s&e!"
+    command-login: "&7Usa: &f/login <contraseña>"
+    command-register: "&7Usa: &f/register <contraseña> <confirmar>"
+
+  medium-warning:
+    message: "&eQuedan {time}s."
+
+  actionbar:
+    login: "&8[{bar}&8] {color}{time}s &8| &7LOGIN"
+    register: "&8[{bar}&8] {color}{time}s &8| &7REGISTRO"
+
+# ======================================================
+#  MENSAJE DE UNIÓN
+# ======================================================
+join:
+  message: "&e{player} se unió al juego"
+
+# ======================================================
+#  HISTORIAL DE LOGIN
+# ======================================================
+history:
+  header: "&6&m-----------------------------"
+  title: "&6&lHistorial de Inicio de Sesión"
+  title-other: "&6&lHistorial de Login &8- &f{player}"
+  footer: "&6&m-----------------------------"
+  no-history: "&cNo hay historial de login disponible."
+  showing: "&7Mostrando los últimos {count} inicio(s) de sesión"
+
+# ======================================================
+#  FORMATO DE FECHA
+# ======================================================
+format:
+  date: "dd/MM/yyyy HH:mm:ss"
+  never: "Nunca"
+  not-available: "N/D"
+
+# ======================================================
+#  PREMIUM (MOJANG) AUTENTICACIÓN
+# ======================================================
+premium:
+  prompt:
+    header: "&8&m                                          "
+    question: "&6&l⚡ &e¿Eres un jugador &6&lPREMIUM &e(Mojang)?"
+    option-premium: "  &a▸ &fEscribe &a/premium &fpara auto-login vía Mojang"
+    option-cracked: "  &c▸ &fEscribe &c/cracked &fpara usar contraseña"
+    footer: "&8&m                                          "
+
+  verifying: "&eVerificando tu cuenta de Mojang..."
+  api-error: "&cNo se pudo contactar con los servidores de Mojang. Usa &f/login &cen su lugar."
+  not-premium: "&cTu nombre no es una cuenta premium de Mojang. Usa &f/login &co &f/register&c."
+  offline-mode: "&cTu sesión no pudo ser verificada (modo offline)."
+  use-login: "&7Usa &f/login <contraseña> &7para autenticarte."
+  uuid-mismatch: "&cTu sesión no coincide con esta cuenta de Mojang."
+  session-unverified: "&cSesión premium expirada o no verificada. Inicia sesión con contraseña."
+
+  login-success: "&a&l✓ &a¡Login premium verificado! Bienvenido, &f{player}&a."
+  auto-login-success: "&a&l✓ &a¡Auto-login premium! Bienvenido de vuelta, &f{player}&a."
+
+  enabled-for-account: "&aAhora estás marcado como &6&lPREMIUM&a. ¡Los futuros inicios de sesión serán automáticos!"
+  disabled-for-account: "&eAuto-login premium &cdesactivado&e. Necesitarás usar &f/login &ela próxima vez."
+  cannot-verify: "&cNo se pudo verificar tu propiedad de Mojang. ¿Estás usando la cuenta correcta?"
+
+  cracked-selected: "&7Continuando con autenticación por contraseña..."
+
+  disabled: "&cLa autenticación premium no está habilitada en este servidor."

@@ -20,21 +20,18 @@ public class ChangePasswordCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
         Player player = (Player) sender;
         MessageManager msg = plugin.getMessageManager();
 
-        // Verificar si está autenticado
         if (!plugin.getSessionManager().isAuthenticated(player)) {
             msg.sendMessage(player, "auth.please-login");
             return true;
         }
 
-        // Verificar argumentos
         if (args.length != 2) {
             msg.sendMessage(player, "commands.changepassword.usage");
             return true;
@@ -43,7 +40,6 @@ public class ChangePasswordCommand implements CommandExecutor {
         String oldPassword = args[0];
         String newPassword = args[1];
 
-        // Validar nueva contraseña
         if (!plugin.getAuthSecurityManager().validatePassword(newPassword)) {
             int minLength = plugin.getConfigManager().getMinPasswordLength();
             int maxLength = plugin.getConfigManager().getMaxPasswordLength();
@@ -64,19 +60,17 @@ public class ChangePasswordCommand implements CommandExecutor {
             return true;
         }
 
-        // Verificar contraseña actual
         plugin.getDatabaseManager().verifyPasswordAsync(player.getName(), oldPassword)
                 .thenAccept(correct -> {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         if (correct) {
-                            // Cambiar contraseña
                             plugin.getDatabaseManager().changePasswordAsync(player.getName(), newPassword)
                                     .thenAccept(success -> {
                                         plugin.getServer().getScheduler().runTask(plugin, () -> {
                                             if (success) {
                                                 msg.sendMessage(player, "commands.changepassword.success");
                                                 plugin.getEffectsManager().playRegisterSound(player);
-                                                plugin.getLogger().info(player.getName() + " changed their password.");
+                                                plugin.getLogger().info(player.getName() + " changed password.");
                                             } else {
                                                 msg.sendMessage(player, "commands.changepassword.failed");
                                                 plugin.getEffectsManager().playErrorSound(player);

@@ -10,13 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
     private final PhoenixLogin plugin;
     private final Map<UUID, PlayerData> activeSessions;
-    private final String tablePrefix = "phoenixlogin_";
+    private static final String TABLE_PREFIX = "phoenixlogin_";
 
     public SessionManager(PhoenixLogin plugin) {
         this.plugin = plugin;
@@ -59,78 +60,91 @@ public class SessionManager {
             data.setAuthenticated(authenticated);
 
             if (authenticated && plugin.getConfigManager().isSessionsEnabled()) {
-                saveSessionToDatabase(player, data);
+                // Save session asynchronously — never block the main thread
+                saveSessionToDatabaseAsync(player, data);
+            }
+
+            if (authenticated) {
+                plugin.getEffectsManager().showPlayers(player);
             }
         }
     }
 
-    public boolean checkExistingSession(Player player, PlayerData data) {
-        if (!plugin.getConfigManager().isSessionsEnabled()) {
-            return false;
-        }
-
-        if (!plugin.getConfigManager().isRememberIP()) {
-            return false;
-        }
+    /**
+     * Checks for an existing valid session asynchronously.
+     * Returns a CompletableFuture<Boolean> to avoid blocking the main thread.
+     */
+    public CompletableFuture<Boolean> checkExistingSessionAsync(Player player, PlayerData data) {
+        if (!plugin.getConfigManager().isSessionsEnabled())
+            return CompletableFuture.completedFuture(false);
+        if (!plugin.getConfigManager().isRememberIP())
+            return CompletableFuture.completedFuture(false);
 
         String currentIP = player.getAddress().getAddress().getHostAddress();
 
-        try (Connection conn = plugin.getDatabaseManager().getConnection();
-                PreparedStatement ps = conn.prepareStatement(
-                        "SELECT * FROM " + tablePrefix + "sessions WHERE player_name = ?")) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = plugin.getDatabaseManager().getConnection();
+                    PreparedStatement ps = conn.prepareStatement(
+                            "SELECT * FROM " + TABLE_PREFIX + "sessions WHERE player_name = ?")) {
 
-            ps.setString(1, player.getName());
-            ResultSet rs = ps.executeQuery();
+                ps.setString(1, player.getName());
+                ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                String savedIP = rs.getString("ip_address");
-                long expiry = rs.getLong("session_expiry");
+                if (rs.next()) {
+                    String savedIP = rs.getString("ip_address");
+                    long expiry = rs.getLong("session_expiry");
 
-                // Verificar si la IP coincide y la sesión no ha expirado
-                if (savedIP.equals(currentIP) && System.currentTimeMillis() < expiry) {
-                    data.setSessionExpiry(expiry);
-                    return true;
+                    if (savedIP.equals(currentIP) && System.currentTimeMillis() < expiry) {
+                        data.setSessionExpiry(expiry);
+                        return true;
+                    }
                 }
+
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error checking session: " + player.getName());
+                e.printStackTrace();
             }
 
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Error checking session for: " + player.getName());
-            e.printStackTrace();
-        }
-
-        return false;
+            return false;
+        });
     }
 
-    private void saveSessionToDatabase(Player player, PlayerData data) {
+    /**
+     * Saves session to database asynchronously.
+     */
+    private void saveSessionToDatabaseAsync(Player player, PlayerData data) {
         String ip = player.getAddress().getAddress().getHostAddress();
         long expiry = System.currentTimeMillis() + (plugin.getConfigManager().getSessionDuration() * 1000L);
         data.setSessionExpiry(expiry);
 
-        try (Connection conn = plugin.getDatabaseManager().getConnection()) {
-            // Primero intentamos actualizar
-            PreparedStatement updatePs = conn.prepareStatement(
-                    "UPDATE " + tablePrefix + "sessions SET ip_address = ?, session_expiry = ? WHERE player_name = ?");
-            updatePs.setString(1, ip);
-            updatePs.setLong(2, expiry);
-            updatePs.setString(3, player.getName());
+        CompletableFuture.runAsync(() -> {
+            try (Connection conn = plugin.getDatabaseManager().getConnection()) {
+                PreparedStatement updatePs = conn.prepareStatement(
+                        "UPDATE " + TABLE_PREFIX
+                                + "sessions SET ip_address = ?, session_expiry = ? WHERE player_name = ?");
+                updatePs.setString(1, ip);
+                updatePs.setLong(2, expiry);
+                updatePs.setString(3, player.getName());
 
-            int updated = updatePs.executeUpdate();
+                int updated = updatePs.executeUpdate();
+                updatePs.close();
 
-            // Si no se actualizó ninguna fila, insertamos una nueva
-            if (updated == 0) {
-                PreparedStatement insertPs = conn.prepareStatement(
-                        "INSERT INTO " + tablePrefix
-                                + "sessions (player_name, ip_address, session_expiry) VALUES (?, ?, ?)");
-                insertPs.setString(1, player.getName());
-                insertPs.setString(2, ip);
-                insertPs.setLong(3, expiry);
-                insertPs.executeUpdate();
+                if (updated == 0) {
+                    PreparedStatement insertPs = conn.prepareStatement(
+                            "INSERT INTO " + TABLE_PREFIX
+                                    + "sessions (player_name, ip_address, session_expiry) VALUES (?, ?, ?)");
+                    insertPs.setString(1, player.getName());
+                    insertPs.setString(2, ip);
+                    insertPs.setLong(3, expiry);
+                    insertPs.executeUpdate();
+                    insertPs.close();
+                }
+
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error saving session: " + player.getName());
+                e.printStackTrace();
             }
-
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Error saving session for: " + player.getName());
-            e.printStackTrace();
-        }
+        });
     }
 
     public void clearAllSessions() {

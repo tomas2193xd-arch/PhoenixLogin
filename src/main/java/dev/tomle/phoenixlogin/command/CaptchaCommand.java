@@ -18,35 +18,30 @@ public class CaptchaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    plugin.getMessageManager().colorize(plugin.getMessageManager().getMessage("commands.player-only")));
+            sender.sendMessage(plugin.getMessageManager().getMessage("commands.player-only"));
             return true;
         }
 
         Player player = (Player) sender;
         MessageManager msg = plugin.getMessageManager();
 
-        // Check if player is already authenticated
         if (plugin.getSessionManager().isAuthenticated(player)) {
             msg.sendMessage(player, "captcha.already-authenticated");
             return true;
         }
 
-        // Check if captcha is required
         if (!plugin.getCaptchaManager().isCaptchaRequired()) {
             msg.sendMessage(player, "captcha.not-required");
             return true;
         }
 
-        // Check if player has a pending captcha
         if (!plugin.getCaptchaManager().hasCaptcha(player)) {
             msg.sendMessage(player, "captcha.no-pending");
             return true;
         }
 
-        // Check arguments
         if (args.length != 1) {
-            msg.sendMessage(player, "captcha.usage");
+            msg.sendMessage(player, "captcha.suggestion");
             return true;
         }
 
@@ -57,7 +52,6 @@ public class CaptchaCommand implements CommandExecutor {
             player.getInventory().clear();
             plugin.getEffectsManager().playLoginSound(player);
 
-            // Instrucciones claras de qué hacer después
             player.sendMessage("");
             dev.tomle.phoenixlogin.model.PlayerData data = plugin.getSessionManager().getPlayerData(player);
             if (data != null && data.isRegistered()) {

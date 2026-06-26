@@ -1,269 +1,59 @@
-# PhoenixLogin
+# 🦅 PhoenixLogin - Advanced Authentication Plugin
+### Desarrollado por Tomas2193
 
-<div align="center">
-  
-  ### Advanced Authentication System for Minecraft
-  
-  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/tomas2193xd-arch/PhoenixLogin)
-  [![YouTube](https://img.shields.io/badge/YouTube-Demo-FF0000?style=for-the-badge&logo=youtube)](https://youtu.be/YVRDkWvm3n0)
-  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-  
-  **Protect your Minecraft server with next-generation authentication**
-</div>
+![Version](https://img.shields.io/badge/version-2.0-blue) ![Spigot](https://img.shields.io/badge/platform-spigot-orange) ![License](https://img.shields.io/badge/license-MIT-green)
+
+**PhoenixLogin** es la solución definitiva para la autenticación en servidores de Minecraft. Diseñado desde cero para ser seguro, rápido y extremadamente personalizable.
 
 ---
 
-## 📋 About
+## 🔥 Novedades de la Versión 2.0 "Super Update"
 
-**PhoenixLogin** is a powerful authentication plugin designed to protect your Minecraft server against unauthorized access, bots, and cracked accounts. With BCrypt encryption, anti-bot captcha system, immersive visual effects, and a unique void authentication world, PhoenixLogin ensures maximum security for your server.
+Esta actualización transforma por completo la experiencia del usuario y del administrador.
 
-## ✨ Key Features
+### 🎨 Experiencia Visual y UX
+- **Inmersión Total**: Los jugadores que están logueándose **no ven a otros jugadores** y viceversa. Esto elimina el caos visual en el spawn.
+- **Chat Limpio**: Sistema inteligente que oculta el chat global a los usuarios no autenticados. Solo verás lo importante.
+- **Títulos Personalizables**: Configura los mensajes de bienvenida y éxito directamente desde la `config.yml`.
+- **Efectos Premium**: Sonidos, partículas y barras de jefe (BossBars) totalmente configurables.
 
-### 🔐 Complete Authentication System
-- **Secure Registration & Login** with BCrypt password encryption
-- **Two-Factor Authentication (2FA)** with Discord integration
-- **Login History Tracking** with detailed analytics
-- **Session Management** with configurable IP memory
-- **Brute-Force Protection** with temporary account lockout
-- **In-Game Password Management** (change/delete accounts)
-- **Customizable Password Requirements** (length, uppercase, numbers, special chars)
-- **Auto-Kick** for unauthenticated players after timeout
+### 🛡️ Seguridad de Grado Militar
+- **Base de Datos Robusta**:
+  - Hashing de contraseñas con **BCrypt** (Estándar de la industria).
+  - Soporte para **SQLite** (local, cero configuración) y **MySQL** (para redes grandes).
+  - Connection Pool optimizado con **HikariCP** para un rendimiento extremo.
+- **Protección**:
+  - Límites de intentos de login.
+  - Bloqueo temporal de cuentas (Lockout).
+  - Filtrado de contraseñas en logs de consola.
 
-### 🤖 Advanced Anti-Bot Protection
-- **Item Captcha System**: Players must place a specific item in a designated slot
-- **Map Captcha System**: Professional map-based verification
-- **Math Captcha** (coming soon): Solve simple math operations
-- **Configurable Difficulty**: Adjust to your server's needs
-- **Effective Bot Prevention**: Stop automated attacks
-
-### 🌍 Unique Void Authentication World
-- **Isolated Login Environment**: Players authenticate in a separate void world
-- **Privacy Protection**: Unauthenticated players can't see your server
-- **Automatic World Generation**: No manual setup required
-- **Smart Teleportation**: Returns to spawn or previous location after login
-
-### 🎭 Immersive Visual Effects
-- **Boss Bar**: Real-time authentication status indicator
-- **Titles & Subtitles**: Eye-catching instructions and messages
-- **Sound Effects**: Audio feedback for login, register, and errors
-- **Particle Effects**: Visual confirmations and error indicators
-- **Login Music System**: 
-  - Vanilla Minecraft sound support
-  - Custom .nbs file support (requires NoteBlockAPI)
-
-### 🛡️ Total Player Protection
-- Movement blocking until authentication
-- Interaction prevention (break, place, inventory, etc.)
-- Damage immunity (received and dealt)
-- Command restriction
-- Complete player freeze for unauthenticated users
-
-### 💾 Flexible Storage
-- **SQLite** support (default, zero configuration)
-- **MySQL/MariaDB** support with connection pooling
-- **Asynchronous Operations** to prevent server lag
-- **Automatic Schema Migration**
-
-### 🌐 Multi-Language Support
-- Fully translatable message system
-- Spanish included by default
-- Easy language file customization
-
-### ⚙️ Highly Configurable
-- 50+ configuration options
-- Fine-tune every aspect of the plugin
-- Well-documented config file
-- Hot-reload support (no restart needed)
-
-## 📹 Video Demonstration
-
-[![PhoenixLogin Demo](https://img.youtube.com/vi/YVRDkWvm3n0/maxresdefault.jpg)](https://youtu.be/YVRDkWvm3n0)
-
-Click to watch the full demonstration video!
-
-## 🚀 Installation
-
-1. **Download** the latest `PhoenixLogin.jar` from [Releases](https://github.com/tomas2193xd-arch/PhoenixLogin/releases)
-2. **Place** the jar file in your server's `plugins/` folder
-3. **Restart** your server or run `/reload confirm`
-4. **Configure** the plugin by editing `plugins/PhoenixLogin/config.yml`
-5. **(Optional)** Install [NoteBlockAPI](https://www.spigotmc.org/resources/noteblockapi.19287/) for custom music
-6. **Enjoy** a secure server!
-
-## 🎯 Commands
-
-### Player Commands
-| Command                          | Aliases                 | Description            |
-| -------------------------------- | ----------------------- | ---------------------- |
-| `/login <password>`              | `/l`                    | Log into your account  |
-| `/register <password> <confirm>` | `/reg`                  | Register a new account |
-| `/captcha <code>`                | -                       | Verify captcha code    |
-| `/verify <code>`                 | -                       | Verify 2FA code        |
-| `/changepassword <old> <new>`    | `/changepass`, `/cp`    | Change your password   |
-| `/unregister <password>`         | -                       | Delete your account    |
-| `/loginhistory [player]`         | `/lhistory`, `/history` | View login history     |
-
-### Admin Commands
-| Command         | Aliases          | Description              |
-| --------------- | ---------------- | ------------------------ |
-| `/phoenixlogin` | `/plogin`, `/pl` | Main admin command       |
-| `/setspawn`     | -                | Set login spawn location |
-
-## 🔑 Permissions
-
-| Permission              | Description                     | Default |
-| ----------------------- | ------------------------------- | ------- |
-| `phoenixlogin.admin`    | Access to admin commands        | op      |
-| `phoenixlogin.setspawn` | Set login spawn location        | op      |
-| `phoenixlogin.bypass`   | Bypass login requirement        | false   |
-| `phoenixlogin.premium`  | Auto-login for premium accounts | false   |
-
-## 🔧 Requirements
-
-- **Minecraft**: 1.19 or higher
-- **Server Software**: Spigot, Paper, Purpur, or any compatible fork
-- **Java**: 17 or higher
-- **Optional**: [NoteBlockAPI](https://www.spigotmc.org/resources/noteblockapi.19287/) for custom music
-
-## ⚙️ Configuration Highlights
-
-### Security Settings
-```yaml
-security:
-  password:
-    min-length: 4              # Minimum password length
-    max-length: 32             # Maximum password length
-    require-uppercase: false   # Require uppercase letters
-    require-numbers: false     # Require numbers
-    require-special: false     # Require special characters
-  max-login-attempts: 3        # Maximum login attempts
-  lockout-duration: 300        # Lockout duration (seconds)
-  sessions:
-    enabled: true              # Session system
-    duration: 60               # Session duration (seconds)
-    remember-ip: true          # Remember player IP
-```
-
-### Captcha System
-```yaml
-captcha:
-  enabled: true                # Enable anti-bot system
-  type: "ITEM"                 # ITEM or MATH
-  item:
-    required-item: "EMERALD"   # Required item
-    target-slot: 4             # Slot to place it in
-```
-
-### Void World
-```yaml
-void-world:
-  enabled: true                       # Use void world for authentication
-  world-name: "phoenixlogin_void"     # Void world name
-  fallback-to-spawn: true             # Fallback if world fails
-```
-
-### Two-Factor Authentication (2FA)
-```yaml
-two-factor:
-  enabled: false                      # Enable 2FA system
-  discord-webhook: ""                 # Discord webhook URL for codes
-  require-for-new-ips: true          # Require 2FA when logging from new IP
-  require-for-all: false             # Always require 2FA (more secure)
-```
-
-**How to set up 2FA with Discord:**
-
-1. **Create a Discord Webhook:**
-   - Go to your Discord server
-   - Edit a channel → Integrations → Webhooks
-   - Click "New Webhook"
-   - Copy the Webhook URL
-
-2. **Configure PhoenixLogin:**
-   ```yaml
-   two-factor:
-     enabled: true
-     discord-webhook: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
-     require-for-new-ips: true
-   ```
-
-3. **How it works:**
-   - Player logs in from a new IP → Plugin sends  6-digit code to Discord
-   - Player receives code in Discord
-   - Player uses `/verify <code>` in-game
-   - Code expires in 2 minutes
-   - After verification, login completes successfully
-
-4. **Modes:**
-   - `require-for-new-ips: true` - Only asks 2FA on new IPs (recommended)
-   - `require-for-all: true` - Always requires 2FA (maximum security)
-
-### Login History
-The plugin automatically tracks all login attempts. Players can view their history with:
-- `/loginhistory` - View your own login history
-- `/loginhistory <player>` - Admins can view any player's history
-
-History shows:
-- ✓/✗ Success or failure status
-- Date and time
-- IP address
-- Authentication method
-
-## 🛠️ Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/tomas2193xd-arch/PhoenixLogin.git
-cd PhoenixLogin
-
-# Build with Maven
-mvn clean package
-
-# The compiled jar will be in target/PhoenixLogin-<version>.jar
-```
-
-## 🐛 Bug Reports & Support
-
-Found a bug or need help? 
-
-- **GitHub Issues**: [Report here](https://github.com/tomas2193xd-arch/PhoenixLogin/issues)
-- **Discord**: Tomas2193
-
-## 💡 Planned Features
-
-- 🔐 Two-factor authentication (2FA)
-- 🌐 Discord webhook integration
-- 👤 Premium account auto-login
-- 📊 Advanced statistics and logs
-- 🔍 Suspicious IP filtering
-- 📧 Email password recovery
-- 🎨 GUI administration panel
-
-## 🌟 Why PhoenixLogin?
-
-✅ **Open Source**: Review and contribute to the code  
-✅ **Frequent Updates**: Regular improvements and bug fixes  
-✅ **Optimized Performance**: Asynchronous operations, zero lag  
-✅ **Easy to Use**: Intuitive configuration and setup  
-✅ **Security First**: Industry-standard encryption and protection  
-✅ **100% Free**: No premium features, no limitations  
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 💖 Credits
-
-**Developer**: TomLe (Tomas2193)  
-**Version**: 1.4.0  
-**Release Date**: December 5, 2025
+### 🧩 Funcionalidades Clave
+- **Captcha Inteligente**: Si un usuario se equivoca el comando, el sistema le sugiere amablemente cómo usarlo en lugar de lanzar errores rojos.
+- **Sistema de Sesiones**: Recuerda la IP de los jugadores para que no tengan que loguearse cada vez que entran (configurable).
+- **Void World**: Un mundo vacío dedicado para la carga y login, optimizando el rendimiento del lobby principal.
+- **Configuración en Español**: Archivo `config.yml` masivo y explicado detalladamente en español.
 
 ---
 
-<div align="center">
-  
-  **If you like this plugin, give it a ⭐ on GitHub!**
-  
-  Made with ❤️ for the Minecraft community
-  
-</div>
+## 🚀 Instalación
+
+1. Descarga el plugin.
+2. Colócalo en la carpeta `plugins/` de tu servidor.
+3. Inicia el servidor.
+4. ¡Disfruta! La configuración por defecto ya es óptima.
+
+## ⚙️ Comandos
+
+| Comando | Descripción | Permiso |
+|BCrypt|---|---|
+| `/login <pass>` | Iniciar sesión | N/A |
+| `/register <pass> <pass>` | Registrarse | N/A |
+| `/captcha <code>` | Verificar captcha | `phoenixlogin.captcha` |
+| `/changepassword` | Cambiar contraseña | N/A |
+| `/phoenixlogin` | Comando de admin | `phoenixlogin.admin` |
+
+## 👨‍💻 Autor
+
+**Tomas2193** - *Creador y Desarrollador Principal*
+
+> "Haciendo plugins que simplemente funcionan."

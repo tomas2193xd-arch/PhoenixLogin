@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.time.Duration;
 import java.util.Map;
@@ -19,6 +20,9 @@ public class EffectsManager {
     private final PhoenixLogin plugin;
     private final Map<UUID, BossBar> activeBossBars;
 
+    // Metadata key used to identify our fireworks 
+    public static final String FIREWORK_META_KEY = "phoenixlogin_firework";
+
     public EffectsManager(PhoenixLogin plugin) {
         this.plugin = plugin;
         this.activeBossBars = new ConcurrentHashMap<>();
@@ -27,59 +31,44 @@ public class EffectsManager {
     // === BOSS BAR ===
 
     public void showLoginBossBar(Player player, int timeRemaining) {
-        if (!plugin.getConfigManager().isBossBarEnabled()) {
+        if (!plugin.getConfigManager().isBossBarEnabled())
             return;
-        }
-
         removeBossBar(player);
 
         String message = plugin.getMessageManager().getMessage("bossbar.please-login")
                 .replace("{time}", String.valueOf(timeRemaining));
 
         BossBar bossBar = BossBar.bossBar(
-                Component.text(message),
-                1.0f,
-                getBossBarColor(),
-                getBossBarOverlay());
+                Component.text(message), 1.0f, getBossBarColor(), getBossBarOverlay());
 
         plugin.adventure().player(player).showBossBar(bossBar);
         activeBossBars.put(player.getUniqueId(), bossBar);
     }
 
     public void showRegisterBossBar(Player player, int timeRemaining) {
-        if (!plugin.getConfigManager().isBossBarEnabled()) {
+        if (!plugin.getConfigManager().isBossBarEnabled())
             return;
-        }
-
         removeBossBar(player);
 
         String message = plugin.getMessageManager().getMessage("bossbar.please-register")
                 .replace("{time}", String.valueOf(timeRemaining));
 
         BossBar bossBar = BossBar.bossBar(
-                Component.text(message),
-                1.0f,
-                getBossBarColor(),
-                getBossBarOverlay());
+                Component.text(message), 1.0f, getBossBarColor(), getBossBarOverlay());
 
         plugin.adventure().player(player).showBossBar(bossBar);
         activeBossBars.put(player.getUniqueId(), bossBar);
     }
 
     public void showCaptchaBossBar(Player player) {
-        if (!plugin.getConfigManager().isBossBarEnabled()) {
+        if (!plugin.getConfigManager().isBossBarEnabled())
             return;
-        }
-
         removeBossBar(player);
 
         String message = plugin.getMessageManager().getMessage("bossbar.captcha");
 
         BossBar bossBar = BossBar.bossBar(
-                Component.text(message),
-                1.0f,
-                BossBar.Color.YELLOW,
-                getBossBarOverlay());
+                Component.text(message), 1.0f, BossBar.Color.YELLOW, getBossBarOverlay());
 
         plugin.adventure().player(player).showBossBar(bossBar);
         activeBossBars.put(player.getUniqueId(), bossBar);
@@ -109,7 +98,6 @@ public class EffectsManager {
 
     private BossBar.Overlay getBossBarOverlay() {
         String style = plugin.getConfigManager().getBossBarStyle();
-
         switch (style) {
             case "SEGMENTED_6":
                 return BossBar.Overlay.NOTCHED_6;
@@ -127,72 +115,40 @@ public class EffectsManager {
     // === TITLES ===
 
     public void showWelcomeTitle(Player player) {
-        if (!plugin.getConfigManager().isTitlesEnabled()) {
+        if (!plugin.getConfigManager().isTitlesEnabled())
             return;
-        }
-
         String titleText = plugin.getMessageManager().getMessage("titles.welcome.title");
         String subtitleText = plugin.getMessageManager().getMessage("titles.welcome.subtitle");
-
         showTitle(player, titleText, subtitleText);
     }
 
     public void showLoginSuccessTitle(Player player) {
-        if (!plugin.getConfigManager().isTitlesEnabled()) {
+        if (!plugin.getConfigManager().isTitlesEnabled())
             return;
-        }
-
         String titleText = plugin.getMessageManager().getMessage("titles.login.title");
         String subtitleText = plugin.getMessageManager().getMessage("titles.login.subtitle");
-
         showTitle(player, titleText, subtitleText);
     }
 
     public void showRegisterSuccessTitle(Player player) {
-        if (!plugin.getConfigManager().isTitlesEnabled()) {
+        if (!plugin.getConfigManager().isTitlesEnabled())
             return;
-        }
-
         String titleText = plugin.getMessageManager().getMessage("titles.register.title");
         String subtitleText = plugin.getMessageManager().getMessage("titles.register.subtitle");
-
         showTitle(player, titleText, subtitleText);
     }
 
     public void showErrorTitle(Player player, String errorMessage) {
-        if (!plugin.getConfigManager().isTitlesEnabled()) {
+        if (!plugin.getConfigManager().isTitlesEnabled())
             return;
-        }
-
         String titleText = plugin.getMessageManager().getMessage("titles.error.title");
         String subtitleText = plugin.getMessageManager().getMessage("titles.error.subtitle")
                 .replace("{message}", errorMessage);
-
         showTitle(player, titleText, subtitleText);
     }
 
-    /**
-     * Muestra título de CAPTCHA con instrucciones claras en pantalla
-     */
     public void showCaptchaTitle(Player player) {
-        if (!plugin.getConfigManager().isTitlesEnabled()) {
-            return;
-        }
-
-        String titleText = "§6§l🔒 VERIFICACIÓN";
-        String subtitleText = "§e§lMira el MAPA §7y usa §f/captcha <código>";
-
-        // Mostrar con más duración para que lean las instrucciones
-        Component titleComponent = Component.text(plugin.getMessageManager().colorize(titleText));
-        Component subtitleComponent = Component.text(plugin.getMessageManager().colorize(subtitleText));
-
-        Title.Times times = Title.Times.times(
-                Duration.ofMillis(10 * 50),
-                Duration.ofMillis(200 * 50), // 10 segundos de stay
-                Duration.ofMillis(20 * 50));
-
-        Title displayTitle = Title.title(titleComponent, subtitleComponent, times);
-        plugin.adventure().player(player).showTitle(displayTitle);
+        // Captcha info is shown via chat only — no title needed
     }
 
     private void showTitle(Player player, String title, String subtitle) {
@@ -211,58 +167,44 @@ public class EffectsManager {
     // === SOUNDS ===
 
     public void playLoginSound(Player player) {
-        try {
-            Sound sound = Sound.valueOf(plugin.getConfigManager().getSoundOnLogin());
-            player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger()
-                    .warning("Invalid sound configured for login: " + plugin.getConfigManager().getSoundOnLogin());
-        }
+        playSound(player, plugin.getConfigManager().getSoundOnLogin());
     }
 
     public void playRegisterSound(Player player) {
-        try {
-            Sound sound = Sound.valueOf(plugin.getConfigManager().getSoundOnRegister());
-            player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning(
-                    "Invalid sound configured for register: " + plugin.getConfigManager().getSoundOnRegister());
-        }
+        playSound(player, plugin.getConfigManager().getSoundOnRegister());
     }
 
     public void playErrorSound(Player player) {
+        playSound(player, plugin.getConfigManager().getSoundOnError());
+    }
+
+    private void playSound(Player player, String soundName) {
         try {
-            Sound sound = Sound.valueOf(plugin.getConfigManager().getSoundOnError());
+            Sound sound = Sound.valueOf(soundName);
             player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
         } catch (IllegalArgumentException e) {
-            plugin.getLogger()
-                    .warning("Invalid sound configured for error: " + plugin.getConfigManager().getSoundOnError());
+            plugin.getLogger().warning("Invalid sound: " + soundName);
         }
     }
 
     // === PARTICLES ===
 
     public void playLoginParticles(Player player) {
-        // Reducido de 20 a 50 para un efecto más suave (TOTEM es rápido) o 5 para
-        // FIREWORKS
-        // Si el usuario quiere "menos cohetes", podemos asumir que FIREWORKS_SPARK es
-        // mejor en menor cantidad
-        // O simplemente spawnear un solo Firework real.
-        // Por ahora, reduciremos la cantidad de partículas del config.
-        spawnParticles(player, plugin.getConfigManager().getParticleOnLogin(), 5); // Reducido drásticamente de 20 (o
-                                                                                   // 100 si era FIREWORKS)
-
-        // Opcional: Lanzar un solo fuego artificial pequeño
+        spawnParticles(player, plugin.getConfigManager().getParticleOnLogin(), 5);
         spawnElegantFirework(player);
     }
 
+    /**
+     * Firework is tagged with metadata so ProtectionListener can cancel
+     * its damage.
+     * Also scheduled to detonate after 2 ticks to rise slightly.
+     */
     private void spawnElegantFirework(Player player) {
-        Location loc = player.getLocation();
+        Location loc = player.getLocation().add(0, 1, 0); // Spawn slightly above player
         org.bukkit.entity.Firework fw = (org.bukkit.entity.Firework) loc.getWorld().spawnEntity(loc,
                 org.bukkit.entity.EntityType.FIREWORK);
         org.bukkit.inventory.meta.FireworkMeta fwm = fw.getFireworkMeta();
 
-        // Un solo efecto elegante: Bola pequeña, Aqua y Blanco
         org.bukkit.FireworkEffect effect = org.bukkit.FireworkEffect.builder()
                 .with(org.bukkit.FireworkEffect.Type.BALL)
                 .withColor(org.bukkit.Color.AQUA)
@@ -271,10 +213,14 @@ public class EffectsManager {
                 .build();
 
         fwm.addEffect(effect);
-        fwm.setPower(0); // Altura mínima para que explote cerca pero no dañe (power 0 o 1)
+        fwm.setPower(0);
         fw.setFireworkMeta(fwm);
 
-        // Detonar casi instantáneamente (1 tick después)
+        // Tag the firework so we can cancel its damage in ProtectionListener
+        fw.setMetadata(FIREWORK_META_KEY, new FixedMetadataValue(plugin, true));
+
+        // Make firework silent and detonating quickly
+        fw.setSilent(true);
         plugin.getServer().getScheduler().runTaskLater(plugin, fw::detonate, 2L);
     }
 
@@ -282,13 +228,48 @@ public class EffectsManager {
         spawnParticles(player, plugin.getConfigManager().getParticleOnError(), 10);
     }
 
+    /**
+     * Tries the configured particle name, then common alternatives for
+     * compatibility.
+     */
     private void spawnParticles(Player player, String particleType, int count) {
+        Location loc = player.getLocation().add(0, 1, 0);
+
+        // Try the configured name first
+        if (trySpawnParticle(player, loc, particleType, count))
+            return;
+
+        // Fallback mappings for version compatibility
+        switch (particleType.toUpperCase()) {
+            case "VILLAGER_HAPPY":
+                if (trySpawnParticle(player, loc, "HAPPY_VILLAGER", count))
+                    return;
+                break;
+            case "HAPPY_VILLAGER":
+                if (trySpawnParticle(player, loc, "VILLAGER_HAPPY", count))
+                    return;
+                break;
+            case "VILLAGER_ANGRY":
+                if (trySpawnParticle(player, loc, "ANGRY_VILLAGER", count))
+                    return;
+                break;
+            case "ANGRY_VILLAGER":
+                if (trySpawnParticle(player, loc, "VILLAGER_ANGRY", count))
+                    return;
+                break;
+        }
+
+        // If nothing works, just log once
+        plugin.getLogger().warning("Could not spawn particle: " + particleType + " (not available in this version)");
+    }
+
+    private boolean trySpawnParticle(Player player, Location loc, String name, int count) {
         try {
-            Particle particle = Particle.valueOf(particleType);
-            Location loc = player.getLocation().add(0, 1, 0);
+            Particle particle = Particle.valueOf(name);
             player.getWorld().spawnParticle(particle, loc, count, 0.5, 0.5, 0.5, 0.1);
+            return true;
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid particle type: " + particleType);
+            return false;
         }
     }
 
@@ -300,5 +281,23 @@ public class EffectsManager {
 
     public void cleanupAll() {
         activeBossBars.clear();
+    }
+
+    // === PLAYER VISIBILITY ===
+
+    public void hidePlayers(Player player) {
+        if (!plugin.getConfigManager().isHidePlayers())
+            return;
+        for (Player online : plugin.getServer().getOnlinePlayers()) {
+            player.hidePlayer(plugin, online);
+            online.hidePlayer(plugin, player);
+        }
+    }
+
+    public void showPlayers(Player player) {
+        for (Player online : plugin.getServer().getOnlinePlayers()) {
+            player.showPlayer(plugin, online);
+            online.showPlayer(plugin, player);
+        }
     }
 }
