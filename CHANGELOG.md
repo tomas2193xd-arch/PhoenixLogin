@@ -35,78 +35,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2025-12-05
 
 ### ✨ Added
-- **Two-Factor Authentication (2FA)**: Sistema completo de autenticación de dos factores
-  - Integración con Discord Webhooks para envío de códigos
-  - Códigos de 6 dígitos con expiración de 2 minutos
-  - Nuevo comando `/verify <código>` para validación
-  - Configuración flexible en `config.yml`
-  - Soporte para requerir 2FA en nuevas IPs o siempre
+- **Two-Factor Authentication (2FA)**: Complete two-factor authentication system
+  - Discord Webhooks integration for sending codes
+  - 6-digit codes with a 2-minute expiration
+  - New `/verify <code>` command for validation
+  - Flexible configuration in `config.yml`
+  - Support for requiring 2FA on new IPs or always
 
-- **Login History System**: Historial completo de intentos de login
-  - Nuevo comando `/loginhistory [player]` con aliases `/lhistory` y `/history`
-  - Guarda fecha, hora, IP, método y estado de cada intento
-  - Los admins pueden consultar historial de cualquier jugador
-  - Almacenamiento en base de datos con limpieza automática
-  - Muestra últimos 10 intentos con formato profesional
+- **Login History System**: Complete login attempt history
+  - New command `/loginhistory [player]` with aliases `/lhistory` and `/history`
+  - Saves date, time, IP, method, and status of each attempt
+  - Admins can check the history of any player
+  - Database storage with automatic cleanup
+  - Shows the last 10 attempts in a professional format
 
-- **Tab Completion**: Autocompletado profesional para comandos
-  - TabCompleter para `/phoenixlogin` con sugerencias de subcomandos
-  - Autocompleta nombres de jugadores en comandos admin
-  - Mejora la experiencia de usuario
+- **Tab Completion**: Professional auto-completion for commands
+  - TabCompleter for `/phoenixlogin` with subcommand suggestions
+  - Auto-completes player names in admin commands
+  - Improves user experience
 
-- **ChatBlockListener**: Sistema de bloqueo de tab completion
-  - Ahora activo y registrado correctamente
-  - Bloquea comandos no autorizados para jugadores sin login
-  - Solo muestra `/login`, `/register` y sus aliases
+- **ChatBlockListener**: Tab completion blocking system
+  - Now active and properly registered
+  - Blocks unauthorized commands for unauthenticated players
+  - Only shows `/login`, `/register`, and their aliases
 
-- **bStats Integration**: Sistema de métricas anónimas
-  - Permite conocer estadísticas de uso del plugin
-  - Totalmente anónimo y respetuoso con la privacidad
-  - Ayuda al desarrollo y mejoras futuras
+- **bStats Integration**: Anonymous metrics system
+  - Allows tracking plugin usage statistics
+  - Completely anonymous and privacy-respecting
+  - Helps with future development and improvements
 
 ### 🔄 Changed
-- API version actualizada de 1.2.0 a 1.4.0
-- Total de comandos incrementado de 7 a 9
-- Total de listeners incrementado de 3 a 4
-- Reorganización del sistema de configuración para 2FA
+- API version updated from 1.2.0 to 1.4.0
+- Total commands increased from 7 to 9
+- Total listeners increased from 3 to 4
+- Configuration system reorganized for 2FA
 
 ### 🐛 Fixed
-- ChatBlockListener ahora se registra correctamente en el startup
-- Consistencia de versiones entre plugin y API
+- ChatBlockListener now registers correctly on startup
+- Version consistency between plugin and API
 
 ### 📚 Documentation
-- README actualizado con nuevas features
-- Guía completa de configuración de 2FA con Discord
-- Ejemplos de uso de nuevos comandos
+- README updated with new features
+- Complete 2FA configuration guide with Discord
+- Usage examples for new commands
 
 ---
 
 ## [1.3.0] - 2025-12-04
 
 ### ✨ Added
-- Console logging system con ASCII art y colores ANSI
-- Estadísticas de startup mejoradas
-- Contador de jugadores registrados en startup
-- Sistema de música profesional con soporte NBS
+- Console logging system with ASCII art and ANSI colors
+- Improved startup statistics
+- Registered players counter on startup
+- Professional music system with NBS support
 
 ### 🔄 Changed
-- Mejoras visuales en consola
-- Optimización de mensajes de log
+- Visual improvements in console
+- Log messages optimization
 
 ---
 
 ## [1.2.0] - 2025-12-03
 
 ### ✨ Added
-- Sistema de API pública para otros plugins
-- Eventos personalizados (PreLogin, Login, PreRegister, Register, LoginFailed)
+- Public API system for other plugins
+- Custom events (PreLogin, Login, PreRegister, Register, LoginFailed)
 - Multi-language support (English & Spanish)
 - Map Captcha system
-- Session management mejorado
+- Improved session management
 
 ### 🔄 Changed
-- Refactorización del sistema de mensajes
-- Mejoras en la arquitectura del plugin
+- Message system refactoring
+- Plugin architecture improvements
 
 ---
 
@@ -114,33 +114,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✨ Added
 - VoidWorld authentication system
-- Location manager para spawn post-login
-- Sistema de efectos visuales (BossBar, Titles, Particles)
-- Comando `/setspawn` para configurar spawn
+- Location manager for post-login spawn
+- Visual effects system (BossBar, Titles, Particles)
+- `/setspawn` command to configure spawn
 
 ### 🐛 Fixed
-- Problemas de teleportación después del login
-- Bugs en el sistema de spawn
+- Teleportation issues after login
+- Spawn system bugs
 
 ---
 
 ## [1.0.0] - 2025-12-01
 
 ### ✨ Initial Release
-- Sistema básico de autenticación con BCrypt
-- Soporte para SQLite y MySQL
-- Captcha de items
-- Protección de jugadores no autenticados
-- Comandos básicos: `/login`, `/register`, `/changepassword`, `/unregister`
-- Sistema de sesiones con memoria de IP
-- Protección anti brute-force
+- Basic authentication system with BCrypt
+- SQLite and MySQL support
+- Item captcha
+- Unauthenticated player protection
+- Basic commands: `/login`, `/register`, `/changepassword`, `/unregister`
+- Session system with IP memory
+- Anti brute-force protection
 
 ---
 
 ## Legend
-- ✨ Added: Nuevas features
-- 🔄 Changed: Cambios en features existentes
+- ✨ Added: New features
+- 🔄 Changed: Changes in existing features
 - 🐛 Fixed: Bug fixes
-- 🗑️ Removed: Features removidas
-- 📚 Documentation: Cambios en documentación
-- 🔒 Security: Parches de seguridad
+- 🗑️ Removed: Removed features
+- 📚 Documentation: Documentation changes
+- 🔒 Security: Security patches
